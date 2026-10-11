@@ -1,0 +1,120 @@
+  /* ============================================================
+     あさの かい ナビ
+     ============================================================ */
+  :root { --bg: #FFFBEA; --line: #FFE8A3; --accent: #F08C00; }
+  .brand { color: #C99A2E; }
+  .duty { display: flex; align-items: center; gap: 12px; justify-content: center; background: #fff; border: 5px solid var(--line); border-radius: 999px; padding: 6px 10px; }
+  .duty .pic { width: 64px; height: 64px; border-radius: 50%; --es: 38px; background: #FFF3BF; }
+  .duty b { font-size: clamp(22px, 3vw, 32px); }
+  .duty small { color: var(--sub); font-size: 14px; }
+  .duty .arr { width: 44px; height: 44px; border-radius: 50%; border: 3px solid var(--line); background: #fff; font-size: 18px; }
+  .today { font-size: clamp(18px, 2.4vw, 26px); color: var(--sub); text-align: center; }
+
+  /* しんこう */
+  .run { gap: 8px; }
+  .rhead { display: flex; align-items: center; gap: 10px; }
+  .rhead .ttl { flex: 1; font-size: clamp(22px, 3.2vw, 38px); font-weight: 800; text-align: center; }
+  .rhead .who { display: flex; align-items: center; gap: 6px; font-size: 15px; color: var(--sub); }
+  .rhead .who .pic { width: 40px; height: 40px; border-radius: 50%; --es: 24px; background: #FFF3BF; }
+  .steps { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; }
+  .steps i { font-style: normal; font-size: 13px; padding: 2px 8px; border-radius: 999px; background: #fff; border: 2px solid var(--line); color: var(--sub); }
+  .steps i.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .steps i.done { background: #FFF3BF; }
+  .body { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(8px, 2vh, 20px); overflow-y: auto; }
+  .lines { display: flex; flex-direction: column; gap: 8px; width: min(1000px, 100%); }
+  .line { font-size: clamp(26px, 4.4vw, 54px); font-weight: 800; background: #fff; border: 5px solid var(--line); border-radius: 26px; padding: 8px 20px; color: #ADB5BD; transition: all .2s; display: flex; align-items: center; gap: 12px; }
+  .line .who2 { font-size: .45em; color: #fff; background: #ADB5BD; border-radius: 999px; padding: 2px 10px; white-space: nowrap; }
+  .line.now { color: var(--ink); border-color: var(--accent); background: #FFF9DB; transform: scale(1.02); }
+  .line.now .who2 { background: var(--accent); }
+  .line.past { color: var(--ink); opacity: .55; }
+  .datecard { display: flex; align-items: stretch; background: #fff; border-radius: 30px; border: 6px solid var(--line); overflow: hidden; }
+  .datecard .m { padding: 8px 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .datecard .m b { font-size: clamp(60px, 11vw, 140px); line-height: 1; }
+  .datecard .m small { font-size: clamp(18px, 2.4vw, 28px); }
+  .datecard .w { color: #fff; font-size: clamp(40px, 7vw, 90px); font-weight: 900; padding: 8px 24px; display: grid; place-items: center; }
+  .wx { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; width: min(1000px, 100%); }
+  .wx button { background: #fff; border: 5px solid var(--line); border-radius: 24px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; font-size: clamp(16px, 2vw, 22px); }
+  .wx button .emo { font-size: clamp(44px, 8vh, 80px); }
+  .wx button.on { border-color: var(--accent); background: #FFF3BF; }
+  .call { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .call .pic { width: clamp(120px, 24vh, 220px); aspect-ratio: 1; border-radius: 50%; --es: clamp(70px, 14vh, 130px); background: #fff; border: 6px solid var(--line); }
+  .call .nm { font-size: clamp(34px, 6vw, 70px); font-weight: 900; }
+  .hbtns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .hbtns button { min-width: 150px; min-height: 76px; border-radius: 24px; border: 5px solid var(--hc); background: #fff; font-size: clamp(18px, 2.4vw, 26px); display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 6px 0 var(--hc); }
+  .hbtns button:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--hc); }
+  .roster { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+  .roster span { background: #fff; border: 3px solid var(--line); border-radius: 999px; padding: 2px 10px; font-size: 15px; }
+  .roster span.now { border-color: var(--accent); }
+  .tt { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; width: min(1100px, 100%); }
+  .tt .c { background: #fff; border: 5px solid var(--line); border-radius: 22px; padding: 6px 10px; display: flex; flex-direction: column; align-items: center; min-width: clamp(100px, 13vw, 150px); transition: all .2s; }
+  .tt .c small { font-size: 14px; color: var(--sub); }
+  .tt .c .emo { font-size: clamp(40px, 7vh, 70px); }
+  .tt .c b { font-size: clamp(18px, 2.4vw, 26px); }
+  .tt .c.now { border-color: var(--accent); background: #FFF9DB; transform: translateY(-6px); }
+  .tt .c.fav { border-color: #E64980; background: #FFF0F6; }
+  .tt .c.fav::after { content: '💖'; font-size: 20px; }
+  .topic { background: #fff; border: 6px dashed var(--accent); border-radius: 30px; padding: 16px 28px; font-size: clamp(30px, 5vw, 60px); font-weight: 900; text-align: center; }
+  .timer { font-size: clamp(40px, 7vw, 80px); font-weight: 900; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .rfoot { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .navb { min-width: clamp(110px, 18vw, 220px); min-height: 76px; border-radius: 999px; border: none; font-size: clamp(22px, 3vw, 34px); color: #fff; background: var(--blue); box-shadow: 0 7px 0 var(--blue-d); }
+  .navb.prev { background: #fff; color: var(--ink); border: 4px solid var(--line); box-shadow: 0 7px 0 var(--line); }
+  .navb:active { transform: translateY(5px); }
+  .navb[disabled] { opacity: .3; pointer-events: none; }
+  .say { width: 64px; height: 64px; border-radius: 50%; border: 3px solid var(--line); background: #fff; font-size: 28px; }
+
+  /* せってい（せんせい） */
+  .setup { gap: 10px; }
+  .sbox { background: #fff; border: 4px solid var(--line); border-radius: 20px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .sbox h3 { margin: 0; font-size: 20px; }
+  .srowx { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .srowx input[type=text] { font: inherit; font-size: 17px; padding: 6px 10px; border-radius: 10px; border: 2px solid var(--line); flex: 1; min-width: 140px; }
+  .srowx .pic { width: 44px; height: 44px; border-radius: 50%; --es: 26px; background: #FFF3BF; cursor: pointer; flex: none; }
+  .ibtn { width: 40px; height: 40px; border-radius: 10px; border: none; background: #F1F3F5; font-size: 17px; flex: none; }
+  .ibtn.warn { background: #FFF0F0; color: #C92A2A; }
+  .ibtn.on { background: var(--accent); color: #fff; }
+  .days { display: flex; gap: 6px; flex-wrap: wrap; }
+  .days button { border: 3px solid var(--line); background: #fff; border-radius: 12px; padding: 6px 14px; font-size: 17px; }
+  .days button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .chipl { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .chipl .ch { display: inline-flex; align-items: center; gap: 4px; background: #FFF9DB; border: 2px solid var(--line); border-radius: 999px; padding: 3px 4px 3px 10px; font-size: 16px; }
+  .chipl .ch button { border: none; background: none; font-size: 15px; padding: 2px 4px; }
+  .prog { display: flex; flex-direction: column; gap: 6px; }
+  .prog .it { display: flex; align-items: center; gap: 8px; background: #FFFBEA; border-radius: 12px; padding: 4px 8px; }
+  .prog .it.off { opacity: .45; }
+  .prog .it b { flex: 1; }
+
+  @media (max-width: 600px), (max-height: 520px) {
+    .line { font-size: 21px; border-width: 3px; border-radius: 16px; padding: 6px 12px; }
+    .navb { min-height: 54px; min-width: 90px; font-size: 19px; box-shadow: 0 4px 0 var(--blue-d); }
+    .say { width: 46px; height: 46px; font-size: 20px; }
+    .wx { grid-template-columns: repeat(3, minmax(0, 1fr)); } .wx button .emo { font-size: 38px; }
+    .hbtns { display: grid; grid-template-columns: 1fr 1fr; width: 100%; gap: 8px; } .hbtns button { min-width: 0; min-height: 50px; font-size: 16px; border-width: 4px; box-shadow: 0 4px 0 var(--hc); }
+    .datecard .w { font-size: 34px; padding: 8px 14px; } .datecard .m b { font-size: 64px; } .datecard { border-width: 4px; }
+    .tt { flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; padding: 8px 2px; }
+    .call .pic { width: 96px; } .call .nm { font-size: 30px; }
+    .steps { display: none; }
+    .duty .pic { width: 48px; height: 48px; }
+    .tt .c { min-width: 76px; padding: 4px; border-width: 3px; } .tt .c .emo { font-size: 32px; } .tt .c b { font-size: 15px; }
+  }
+  @media (max-height: 520px) and (orientation: landscape) {
+    .wx { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+    .call .pic { width: 70px; } .call .nm { font-size: 26px; } .hbtns { grid-template-columns: repeat(4, 1fr); }
+    .datecard .m b { font-size: 56px; } .datecard .w { font-size: 38px; }
+    .body { justify-content: flex-start; }
+  }
+
+  /* プリント */
+  .pscript { display: flex; flex-direction: column; gap: 2.4mm; }
+  .pscript .ph2 { font-size: 5.4mm; font-weight: 800; background: #FFF3BF; border-radius: 2mm; padding: 1mm 3mm; margin-top: 1.5mm; }
+  .pscript .pl { font-size: 5mm; padding-left: 6mm; line-height: 1.45; }
+  .pscript.sm { display: block; column-count: 2; column-gap: 6mm; } .pscript.sm .ph2 { font-size: 4.4mm; break-after: avoid; } .pscript.sm .pl { font-size: 4mm; padding-left: 3mm; margin-top: 1.4mm; break-inside: avoid; }
+  .ptt { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  .ptt th, .ptt td { border: .4mm solid #333; text-align: center; vertical-align: middle; }
+  .ptt th { background: #FFF3BF; font-size: 6mm; height: 11mm; }
+  .ptt td { height: 26mm; font-size: 4.6mm; line-height: 1.2; }
+  .ptt td .pe { font-size: 11mm; display: block; }
+  .ptt td.no { width: 14mm; font-size: 5mm; background: #FAFAFA; }
+  .phl { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 3.6mm; }
+  .phl th, .phl td { border: .3mm solid #555; text-align: center; height: 7mm; padding: 0; overflow: hidden; }
+  .phl th { background: #FFF3BF; font-size: 3.2mm; }
+  .phl td.n, .phl th.n { width: 30mm; text-align: left; padding-left: 1.5mm; font-size: 3mm; line-height: 1.15; word-break: break-all; }

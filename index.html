@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<!--
+  © 2026 MieeL（ミエル） https://www.mieel-support-school.com/  All rights reserved.
+  学校・家庭・療育機関などで子どもの学習に使うこと、作ったプリントを印刷して配ることは自由です。
+  プログラム・画像・文章の無断転載・複製、改変しての公開・再配布、販売はお断りします（くわしくは LICENSE.md）。
+-->
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="あさのかい">
+<meta name="theme-color" content="#FFFBEA">
+<title>あさの かい ナビ｜MieeL</title>
+<style>
+  /* ============================================================
+     MieeL アプリ きょうつう（base.css）
+     ============================================================ */
+  :root {
+    --mieel: radial-gradient(circle at 50% 0%,#1B8FE8 0%,#2BB8D6 28%,#3FCB9E 45%,#8FD24A 58%,#F4D027 72%,#F7941E 100%);
+    --ink: #1F2937; --sub: #6B7280;
+    --go: #2F9E44; --go-d: #237A34; --blue: #1C7ED6; --blue-d: #1864AB; --orange: #F76707; --gold: #FAB005; --red: #E03131; --pink: #F06595; --teal: #0CA678; --violet: #7048E8;
+    --emo: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  [hidden] { display: none !important; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: "Hiragino Maru Gothic ProN", "ヒラギノ丸ゴ ProN", "BIZ UDPGothic", "Yu Gothic UI", "Meiryo", system-ui, sans-serif;
+    font-weight: 700; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+    touch-action: manipulation; overscroll-behavior: none;
+    display: flex; flex-direction: column; height: 100vh; height: 100dvh;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    overflow-x: hidden;
+  }
+  button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulation; }
+  input, textarea, select { -webkit-user-select: text; user-select: text; }
+  .emo { font-family: var(--emo); font-weight: 400; line-height: 1; }
+
+  .topbar { display: flex; align-items: center; gap: 10px; padding: 8px 16px; min-height: 64px; }
+  .chip { display: flex; align-items: center; gap: 6px; padding: 4px 14px 4px 8px; border-radius: 999px; background: #fff; border: 3px solid var(--line); font-size: 19px; white-space: nowrap; }
+  .chip .emo { font-size: 26px; }
+  .chip.home { border-color: var(--line); color: var(--ink); position: relative; overflow: hidden; touch-action: none; }
+  .chip.home i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: rgba(0,0,0,.12); }
+  .chip.home.pressing i { width: 100%; transition: width 1.2s linear; }
+  .chip.home span { position: relative; }
+  .brand { flex: 1; display: flex; justify-content: center; align-items: center; gap: 14px; color: var(--sub); font-size: 16px; letter-spacing: .1em; min-width: 0; }
+  .mieel-brand { display: flex; align-items: center; gap: 7px; white-space: nowrap; flex: none; }
+  .orb-mini { width: 22px; height: 22px; border-radius: 50%; background: var(--mieel); flex: none; }
+  .mieel-brand strong { font-size: 16px; color: var(--ink); }
+  .mieel-brand .url { font-size: 12px; color: var(--sub); font-weight: 600; }
+  .mieel-foot { margin-top: 28px; padding-top: 16px; border-top: 1px solid #E9ECEF; text-align: center; color: var(--sub); font-size: 13px; line-height: 1.8; }
+  .mieel-foot .mieel-brand { justify-content: center; }
+  .mieel-foot a { color: #1C7ED6; font-weight: 700; text-decoration: none; font-size: 14px; }
+  .gear { position: relative; width: 52px; height: 52px; border-radius: 50%; border: none; background: transparent; opacity: .35; font-size: 26px; display: grid; place-items: center; }
+  .gear::after { content: ""; position: absolute; inset: 2px; border-radius: 50%; border: 4px solid transparent; }
+  .gear.pressing { opacity: 1; }
+  .gear.pressing::after { border-color: var(--blue); animation: ring 1.5s linear forwards; }
+  @keyframes ring { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+
+  main { flex: 1; display: flex; flex-direction: column; min-height: 0; padding: 0 16px 12px; }
+  .screen { flex: 1; display: flex; flex-direction: column; min-height: 0; overflow-y: auto; gap: clamp(8px, 1.4vh, 14px); animation: fadein .25s ease-out; }
+  @keyframes fadein { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @keyframes pop { from { transform: scale(.6); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes shake { 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
+  @keyframes pulse { to { transform: scale(1.05); } }
+  .shake { animation: shake .45s; }
+  .title { font-size: clamp(24px, 3.4vw, 42px); text-align: center; margin: 0; line-height: 1.35; word-break: keep-all; overflow-wrap: anywhere; }
+  .title small { display: block; font-size: .5em; color: var(--sub); }
+  .actions { display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; }
+  .big-btn { min-width: min(260px, 78vw); min-height: 76px; padding: 0 26px; border: none; border-radius: 999px; color: #fff; font-size: clamp(20px, 2.9vw, 32px); display: inline-flex; align-items: center; justify-content: center; gap: 10px; }
+  .big-btn.go { background: var(--go); box-shadow: 0 8px 0 var(--go-d); }
+  .big-btn.blue { background: var(--blue); box-shadow: 0 8px 0 var(--blue-d); }
+  .big-btn.white { background: #fff; color: var(--ink); box-shadow: 0 8px 0 var(--line); border: 4px solid var(--line); }
+  .big-btn:active { transform: translateY(6px); box-shadow: 0 2px 0 rgba(0,0,0,.25); }
+  .big-btn[disabled] { opacity: .35; pointer-events: none; }
+  .mid-btn { min-height: 54px; padding: 0 18px; border-radius: 999px; border: 4px solid var(--line); background: #fff; font-size: clamp(15px, 1.9vw, 20px); box-shadow: 0 5px 0 var(--line); display: inline-flex; align-items: center; gap: 8px; }
+  .mid-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--line); }
+  .mid-btn.on { background: #FFF3BF; border-color: var(--gold); }
+  .menu { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 44vw), 1fr)); gap: 14px; width: min(1000px, 100%); }
+  .mcard { background: #fff; border: 6px solid var(--c); border-radius: 30px; padding: 14px 10px; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; box-shadow: 0 7px 0 var(--c); position: relative; overflow: hidden; }
+  .mcard .emo { font-size: clamp(46px, 7.5vh, 76px); }
+  .mcard b { font-size: clamp(19px, 2.5vw, 28px); color: var(--c); }
+  .mcard small { font-size: clamp(13px, 1.6vw, 17px); color: var(--sub); }
+  .mcard:active { transform: translateY(5px); box-shadow: 0 2px 0 var(--c); }
+  .mcard .lp { position: absolute; left: 0; bottom: 0; height: 8px; width: 0; background: var(--c); }
+  .mcard.pressing .lp { width: 100%; transition: width 1s linear; }
+  .home { align-items: center; }
+  .home > :first-child { margin-top: auto; } .home > :last-child { margin-bottom: auto; }
+  .note-box { font-size: 14px; color: var(--sub); text-align: center; background: #fff; border-radius: 14px; padding: 8px 14px; border: 2px dashed var(--line); }
+  .center { flex: 1 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(8px, 2vh, 18px); text-align: center; }
+  .praise { position: fixed; left: 50%; top: 38%; transform: translate(-50%, -50%); font-size: clamp(50px, 8.6vw, 110px); font-weight: 900; color: var(--orange); white-space: nowrap; -webkit-text-stroke: 5px #fff; paint-order: stroke fill; pointer-events: none; z-index: 40; animation: praise 1.2s ease-out forwards; }
+  @keyframes praise { 0% { transform: translate(-50%, -50%) scale(.3); opacity: 0; } 22% { transform: translate(-50%, -50%) scale(1.12); opacity: 1; } 70% { transform: translate(-50%, -54%) scale(1); opacity: 1; } 100% { transform: translate(-50%, -70%); opacity: 0; } }
+  .stars { font-size: clamp(56px, 11vh, 104px); letter-spacing: 8px; }
+  .stars span { display: inline-block; animation: spinin .7s cubic-bezier(.2, 1.4, .4, 1) both; font-family: var(--emo); }
+  .stars span.off { filter: grayscale(1); opacity: .25; }
+  @keyframes spinin { from { transform: rotate(-360deg) scale(0); } to { transform: none; } }
+  .pic { position: relative; display: grid; place-items: center; overflow: hidden; background: #fff; }
+  .pic img { width: 100%; height: 100%; object-fit: cover; }
+  .pic .emo { font-size: var(--es, 60px); }
+  .quit { position: relative; overflow: hidden; border: 2px solid #DEE2E6; background: #fff; color: #868E96; font-size: 15px; padding: 9px 13px; border-radius: 999px; touch-action: none; }
+  .quit i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: #FFE3E3; }
+  .quit span { position: relative; }
+  .quit.pressing { color: #E03131; border-color: #FFA8A8; }
+  .quit.pressing i { width: 100%; transition: width 1.5s linear; }
+  .ov { position: fixed; inset: 0; z-index: 45; background: rgba(255, 255, 255, .97); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 20px; animation: fadein .25s; text-align: center; overflow-y: auto; }
+
+  body.calm *, body.calm *::before, body.calm *::after { animation: none !important; transition: none !important; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01s !important; animation-iteration-count: 1 !important; } }
+  @media (max-width: 600px), (max-height: 520px) {
+    .topbar { min-height: 50px; padding: 4px 8px; gap: 6px; }
+    .topbar .appname, .topbar .url, .chip .lbl { display: none; }
+    .chip { font-size: 15px; padding: 2px 8px 2px 6px; border-width: 2px; } .chip .emo { font-size: 20px; }
+    .gear { width: 42px; height: 42px; font-size: 21px; }
+    main { padding: 0 8px 8px; }
+    .title { font-size: 21px; }
+    .big-btn { min-width: 0; min-height: 56px; padding: 0 18px; font-size: 19px; box-shadow: 0 5px 0 var(--go-d); }
+    .big-btn.blue { box-shadow: 0 5px 0 var(--blue-d); } .big-btn.white { box-shadow: 0 5px 0 var(--line); }
+    .mid-btn { min-height: 44px; padding: 0 12px; font-size: 14px; }
+    .menu { grid-template-columns: 1fr 1fr; gap: 10px; } .mcard { border-width: 4px; box-shadow: 0 5px 0 var(--c); border-radius: 22px; padding: 10px 6px; }
+  }
+
+  /* ---------- 先生用：設定 ---------- */
+  .modal { position: fixed; inset: 0; z-index: 50; background: rgba(17, 24, 39, .55); display: none; align-items: flex-start; justify-content: center; padding: 24px 12px; overflow-y: auto; -webkit-user-select: text; user-select: text; }
+  .modal.open { display: flex; }
+  .panel { width: min(100%, 900px); background: #fff; border-radius: 24px; padding: 22px clamp(14px, 4vw, 32px) 28px; font-weight: 400; font-size: 17px; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+  .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .panel h2 { margin: 0; font-size: 25px; font-weight: 700; }
+  .panel h3 { margin: 28px 0 10px; font-size: 20px; font-weight: 700; padding-left: 10px; border-left: 6px solid var(--accent, var(--blue)); }
+  .panel h4 { margin: 14px 0 4px; }
+  .note { color: var(--sub); font-size: 15px; line-height: 1.6; margin: 6px 0; }
+  .panel label.row { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 6px 0; border-bottom: 1px solid #F1F3F5; }
+  .panel label.row > span:first-child { flex: 1; }
+  .panel input[type=text], .panel select, .panel textarea { font: inherit; font-size: 17px; padding: 9px 12px; border: 2px solid #CED4DA; border-radius: 12px; background: #fff; }
+  .panel textarea { width: 100%; min-height: 110px; line-height: 1.6; }
+  .panel input[type=checkbox] { width: 28px; height: 28px; accent-color: var(--go); }
+  .panel input[type=range] { width: 200px; }
+  .btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; align-items: center; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; border: none; border-radius: 12px; padding: 11px 18px; font-size: 16px; font-weight: 700; background: #E9ECEF; color: var(--ink); cursor: pointer; }
+  .btn.primary { background: var(--blue); color: #fff; } .btn.ok { background: var(--go); color: #fff; } .btn.warn { background: #FFF0F0; color: #C92A2A; }
+  .seg { display: flex; gap: 6px; flex-wrap: wrap; }
+  .seg button { flex: 1; min-width: 86px; padding: 10px 8px; font-size: 15px; font-weight: 700; border-radius: 12px; border: 2px solid #CED4DA; background: #fff; }
+  .seg button.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .srow { display: grid; grid-template-columns: minmax(150px, 220px) 1fr; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid #F1F3F5; }
+  @media (max-width: 600px) { .srow { grid-template-columns: 1fr; } }
+  .prow { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid #E9ECEF; border-radius: 14px; flex-wrap: wrap; margin-bottom: 6px; }
+  .mini-btn { min-width: 40px; height: 40px; border-radius: 10px; border: none; background: #F1F3F5; font-size: 16px; padding: 0 10px; }
+  .mini-btn.warn { background: #FFF0F0; color: #C92A2A; }
+  .rec-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .rec-table th, .rec-table td { border-bottom: 1px solid #E9ECEF; padding: 6px 4px; text-align: left; vertical-align: top; }
+  .toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); background: rgba(17,24,39,.9); color: #fff; padding: 14px 22px; border-radius: 14px; font-size: 18px; z-index: 60; display: none; max-width: 90vw; text-align: center; }
+  .toast.show { display: block; }
+  .lib { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
+  .lib button { background: #fff; border: 3px solid var(--line); border-radius: 16px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 14px; }
+  .lib button .emo { font-size: 38px; }
+  .lib h4 { grid-column: 1 / -1; margin: 6px 0 0; color: var(--sub); }
+
+  /* ---------- プリント（A4） ---------- */
+  #printRoot { display: none; }
+  .ppage { flex: none; width: 210mm; height: 297mm; padding: 12mm 13mm 10mm; box-sizing: border-box; background: #fff; color: #111; position: relative; overflow: hidden; font-family: "BIZ UDPGothic", "Hiragino Maru Gothic ProN", "Yu Gothic", "Meiryo", sans-serif; font-weight: 700; display: flex; flex-direction: column; gap: 3mm; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .ppage .phd { display: flex; align-items: flex-end; justify-content: space-between; border-bottom: .8mm solid #111; padding-bottom: 2mm; gap: 4mm; }
+  .ppage .phd h1 { margin: 0; font-size: 7.5mm; }
+  .ppage .phd small { font-size: 3.8mm; font-weight: 400; display: block; }
+  .ppage .nm { font-size: 5mm; border-bottom: .4mm solid #111; min-width: 50mm; padding: 0 2mm 1mm; white-space: nowrap; }
+  .ppage .pf { margin-top: auto; text-align: right; font-size: 3mm; color: #888; }
+  .ppage .pe { font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; font-weight: 400; }
+  @media print {
+    @page { size: A4 portrait; margin: 0; }
+    html, body { height: auto !important; overflow: visible !important; display: block !important; background: #fff !important; padding: 0 !important; }
+    body > *:not(#printRoot) { display: none !important; }
+    #printRoot { display: block !important; }
+    #printRoot .ppage { page-break-after: always; break-after: page; }
+    #printRoot .ppage:last-child { page-break-after: auto; break-after: auto; }
+  }
+
+  /* ---------- 🖨️ プリントの 画面 ---------- */
+  .panel.wide { width: min(100%, 1180px); }
+  .seglabel { margin: 12px 0 6px; font-weight: 700; font-size: 15px; }
+  .prgrid { display: grid; grid-template-columns: minmax(280px, 360px) minmax(0, 1fr); gap: 18px; margin-top: 10px; }
+  .prctl .seg button { min-width: 0; }
+  .prctl .seg.types { flex-direction: column; }
+  .prctl .seg.types button { text-align: left; padding: 10px 14px; }
+  .btn.blue { background: #1C7ED6; color: #fff; }
+  .prprev { background: #E9ECEF; border-radius: 16px; padding: 12px; max-height: 76vh; overflow-y: auto; }
+  .pwrap { margin: 0 auto 14px; box-shadow: 0 4px 14px rgba(0,0,0,.18); overflow: hidden; background: #fff; }
+  .pwrap .ppage { transform-origin: top left; }
+  @media (max-width: 820px) { .prgrid { grid-template-columns: 1fr; } }
+
+  /* ============================================================
+     あさの かい ナビ
+     ============================================================ */
+  :root { --bg: #FFFBEA; --line: #FFE8A3; --accent: #F08C00; }
+  .brand { color: #C99A2E; }
+  .duty { display: flex; align-items: center; gap: 12px; justify-content: center; background: #fff; border: 5px solid var(--line); border-radius: 999px; padding: 6px 10px; }
+  .duty .pic { width: 64px; height: 64px; border-radius: 50%; --es: 38px; background: #FFF3BF; }
+  .duty b { font-size: clamp(22px, 3vw, 32px); }
+  .duty small { color: var(--sub); font-size: 14px; }
+  .duty .arr { width: 44px; height: 44px; border-radius: 50%; border: 3px solid var(--line); background: #fff; font-size: 18px; }
+  .today { font-size: clamp(18px, 2.4vw, 26px); color: var(--sub); text-align: center; }
+
+  /* しんこう */
+  .run { gap: 8px; }
+  .rhead { display: flex; align-items: center; gap: 10px; }
+  .rhead .ttl { flex: 1; font-size: clamp(22px, 3.2vw, 38px); font-weight: 800; text-align: center; }
+  .rhead .who { display: flex; align-items: center; gap: 6px; font-size: 15px; color: var(--sub); }
+  .rhead .who .pic { width: 40px; height: 40px; border-radius: 50%; --es: 24px; background: #FFF3BF; }
+  .steps { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; }
+  .steps i { font-style: normal; font-size: 13px; padding: 2px 8px; border-radius: 999px; background: #fff; border: 2px solid var(--line); color: var(--sub); }
+  .steps i.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .steps i.done { background: #FFF3BF; }
+  .body { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(8px, 2vh, 20px); overflow-y: auto; }
+  .lines { display: flex; flex-direction: column; gap: 8px; width: min(1000px, 100%); }
+  .line { font-size: clamp(26px, 4.4vw, 54px); font-weight: 800; background: #fff; border: 5px solid var(--line); border-radius: 26px; padding: 8px 20px; color: #ADB5BD; transition: all .2s; display: flex; align-items: center; gap: 12px; }
+  .line .who2 { font-size: .45em; color: #fff; background: #ADB5BD; border-radius: 999px; padding: 2px 10px; white-space: nowrap; }
+  .line.now { color: var(--ink); border-color: var(--accent); background: #FFF9DB; transform: scale(1.02); }
+  .line.now .who2 { background: var(--accent); }
+  .line.past { color: var(--ink); opacity: .55; }
+  .datecard { display: flex; align-items: stretch; background: #fff; border-radius: 30px; border: 6px solid var(--line); overflow: hidden; }
+  .datecard .m { padding: 8px 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .datecard .m b { font-size: clamp(60px, 11vw, 140px); line-height: 1; }
+  .datecard .m small { font-size: clamp(18px, 2.4vw, 28px); }
+  .datecard .w { color: #fff; font-size: clamp(40px, 7vw, 90px); font-weight: 900; padding: 8px 24px; display: grid; place-items: center; }
+  .wx { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; width: min(1000px, 100%); }
+  .wx button { background: #fff; border: 5px solid var(--line); border-radius: 24px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; font-size: clamp(16px, 2vw, 22px); }
+  .wx button .emo { font-size: clamp(44px, 8vh, 80px); }
+  .wx button.on { border-color: var(--accent); background: #FFF3BF; }
+  .call { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .call .pic { width: clamp(120px, 24vh, 220px); aspect-ratio: 1; border-radius: 50%; --es: clamp(70px, 14vh, 130px); background: #fff; border: 6px solid var(--line); }
+  .call .nm { font-size: clamp(34px, 6vw, 70px); font-weight: 900; }
+  .hbtns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .hbtns button { min-width: 150px; min-height: 76px; border-radius: 24px; border: 5px solid var(--hc); background: #fff; font-size: clamp(18px, 2.4vw, 26px); display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 6px 0 var(--hc); }
+  .hbtns button:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--hc); }
+  .roster { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+  .roster span { background: #fff; border: 3px solid var(--line); border-radius: 999px; padding: 2px 10px; font-size: 15px; }
+  .roster span.now { border-color: var(--accent); }
+  .tt { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; width: min(1100px, 100%); }
+  .tt .c { background: #fff; border: 5px solid var(--line); border-radius: 22px; padding: 6px 10px; display: flex; flex-direction: column; align-items: center; min-width: clamp(100px, 13vw, 150px); transition: all .2s; }
+  .tt .c small { font-size: 14px; color: var(--sub); }
+  .tt .c .emo { font-size: clamp(40px, 7vh, 70px); }
+  .tt .c b { font-size: clamp(18px, 2.4vw, 26px); }
+  .tt .c.now { border-color: var(--accent); background: #FFF9DB; transform: translateY(-6px); }
+  .tt .c.fav { border-color: #E64980; background: #FFF0F6; }
+  .tt .c.fav::after { content: '💖'; font-size: 20px; }
+  .topic { background: #fff; border: 6px dashed var(--accent); border-radius: 30px; padding: 16px 28px; font-size: clamp(30px, 5vw, 60px); font-weight: 900; text-align: center; }
+  .timer { font-size: clamp(40px, 7vw, 80px); font-weight: 900; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .rfoot { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .navb { min-width: clamp(110px, 18vw, 220px); min-height: 76px; border-radius: 999px; border: none; font-size: clamp(22px, 3vw, 34px); color: #fff; background: var(--blue); box-shadow: 0 7px 0 var(--blue-d); }
+  .navb.prev { background: #fff; color: var(--ink); border: 4px solid var(--line); box-shadow: 0 7px 0 var(--line); }
+  .navb:active { transform: translateY(5px); }
+  .navb[disabled] { opacity: .3; pointer-events: none; }
+  .say { width: 64px; height: 64px; border-radius: 50%; border: 3px solid var(--line); background: #fff; font-size: 28px; }
+
+  /* せってい（せんせい） */
+  .setup { gap: 10px; }
+  .sbox { background: #fff; border: 4px solid var(--line); border-radius: 20px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .sbox h3 { margin: 0; font-size: 20px; }
+  .srowx { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .srowx input[type=text] { font: inherit; font-size: 17px; padding: 6px 10px; border-radius: 10px; border: 2px solid var(--line); flex: 1; min-width: 140px; }
+  .srowx .pic { width: 44px; height: 44px; border-radius: 50%; --es: 26px; background: #FFF3BF; cursor: pointer; flex: none; }
+  .ibtn { width: 40px; height: 40px; border-radius: 10px; border: none; background: #F1F3F5; font-size: 17px; flex: none; }
+  .ibtn.warn { background: #FFF0F0; color: #C92A2A; }
+  .ibtn.on { background: var(--accent); color: #fff; }
+  .days { display: flex; gap: 6px; flex-wrap: wrap; }
+  .days button { border: 3px solid var(--line); background: #fff; border-radius: 12px; padding: 6px 14px; font-size: 17px; }
+  .days button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .chipl { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .chipl .ch { display: inline-flex; align-items: center; gap: 4px; background: #FFF9DB; border: 2px solid var(--line); border-radius: 999px; padding: 3px 4px 3px 10px; font-size: 16px; }
+  .chipl .ch button { border: none; background: none; font-size: 15px; padding: 2px 4px; }
+  .prog { display: flex; flex-direction: column; gap: 6px; }
+  .prog .it { display: flex; align-items: center; gap: 8px; background: #FFFBEA; border-radius: 12px; padding: 4px 8px; }
+  .prog .it.off { opacity: .45; }
+  .prog .it b { flex: 1; }
+
+  @media (max-width: 600px), (max-height: 520px) {
+    .line { font-size: 21px; border-width: 3px; border-radius: 16px; padding: 6px 12px; }
+    .navb { min-height: 54px; min-width: 90px; font-size: 19px; box-shadow: 0 4px 0 var(--blue-d); }
+    .say { width: 46px; height: 46px; font-size: 20px; }
+    .wx { grid-template-columns: repeat(3, minmax(0, 1fr)); } .wx button .emo { font-size: 38px; }
+    .hbtns { display: grid; grid-template-columns: 1fr 1fr; width: 100%; gap: 8px; } .hbtns button { min-width: 0; min-height: 50px; font-size: 16px; border-width: 4px; box-shadow: 0 4px 0 var(--hc); }
+    .datecard .w { font-size: 34px; padding: 8px 14px; } .datecard .m b { font-size: 64px; } .datecard { border-width: 4px; }
+    .tt { flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; padding: 8px 2px; }
+    .call .pic { width: 96px; } .call .nm { font-size: 30px; }
+    .steps { display: none; }
+    .duty .pic { width: 48px; height: 48px; }
+    .tt .c { min-width: 76px; padding: 4px; border-width: 3px; } .tt .c .emo { font-size: 32px; } .tt .c b { font-size: 15px; }
+  }
+  @media (max-height: 520px) and (orientation: landscape) {
+    .wx { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+    .call .pic { width: 70px; } .call .nm { font-size: 26px; } .hbtns { grid-template-columns: repeat(4, 1fr); }
+    .datecard .m b { font-size: 56px; } .datecard .w { font-size: 38px; }
+    .body { justify-content: flex-start; }
+  }
+
+  /* プリント */
+  .pscript { display: flex; flex-direction: column; gap: 2.4mm; }
+  .pscript .ph2 { font-size: 5.4mm; font-weight: 800; background: #FFF3BF; border-radius: 2mm; padding: 1mm 3mm; margin-top: 1.5mm; }
+  .pscript .pl { font-size: 5mm; padding-left: 6mm; line-height: 1.45; }
+  .pscript.sm { display: block; column-count: 2; column-gap: 6mm; } .pscript.sm .ph2 { font-size: 4.4mm; break-after: avoid; } .pscript.sm .pl { font-size: 4mm; padding-left: 3mm; margin-top: 1.4mm; break-inside: avoid; }
+  .ptt { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  .ptt th, .ptt td { border: .4mm solid #333; text-align: center; vertical-align: middle; }
+  .ptt th { background: #FFF3BF; font-size: 6mm; height: 11mm; }
+  .ptt td { height: 26mm; font-size: 4.6mm; line-height: 1.2; }
+  .ptt td .pe { font-size: 11mm; display: block; }
+  .ptt td.no { width: 14mm; font-size: 5mm; background: #FAFAFA; }
+  .phl { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 3.6mm; }
+  .phl th, .phl td { border: .3mm solid #555; text-align: center; height: 7mm; padding: 0; overflow: hidden; }
+  .phl th { background: #FFF3BF; font-size: 3.2mm; }
+  .phl td.n, .phl th.n { width: 30mm; text-align: left; padding-left: 1.5mm; font-size: 3mm; line-height: 1.15; word-break: break-all; }
+
+</style>
+</head>
+<body>
+<header class="topbar">
+  <button class="chip home" id="homeBtn" type="button" aria-label="さいしょの ページに もどる" hidden><i></i><span class="emo">🏠</span><span class="lbl" id="homeLbl">さいしょ</span></button>
+  <button class="chip" id="whoChip" type="button" hidden></button>
+  <div class="brand"><div class="mieel-brand" aria-label="MieeL"><span class="orb-mini"></span><strong>MieeL</strong><span class="url">mieel-support-school.com</span></div><span class="appname">あさの かい ナビ</span></div>
+  <span id="extraChips"></span>
+  <button class="chip" id="printBtn" type="button" aria-label="A4プリントを つくる" hidden>🖨️<span class="appname">プリント</span></button>
+  <button class="gear" id="gear" type="button" aria-label="先生用のせってい（ながおし）">⚙️</button>
+</header>
+<main id="view"></main>
+<div class="modal" id="settings" role="dialog" aria-modal="true" aria-label="先生用せってい"><div class="panel" id="settingsPanel"></div></div>
+<div class="modal" id="printModal" role="dialog" aria-modal="true" aria-label="プリント"><div class="panel wide" id="printPanel"></div></div>
+<div class="modal" id="libModal" role="dialog" aria-modal="true" aria-label="えらぶ"><div class="panel" id="libPanel"></div></div>
+<input type="file" id="fileIn" hidden>
+<div class="toast" id="toast"></div>
+<div id="printRoot"></div>
+<script>
+function jaSay(t) {
+  // 読み上げで 単語の あたまの「は」「へ」が 助詞（わ・え）と 読まれないように カタカナに する（はこ→ハこ、へや→ヘや）
+  return String(t == null ? '' : t).replace(/なかまはずれ/g, '仲間外れ').replace(/(^|[\s、。！？!?・（(「『])([はへ])(?=[ぁ-ゖァ-ヺー一-鿿])/g, function (m, a, c) { return a + (c === 'は' ? 'ハ' : 'ヘ'); });
+}
+(function () {
+  'use strict';
+  /* ============================================================
+     あさの かい ナビ
+     にっちょくが ページを めくって あさの かい・かえりの かいを すすめる。
+     ことばが でにくい 子は、🔊 で アプリが かわりに いう。
+     ============================================================ */
+  const SUBJ = [['☀️', 'あさの かい'], ['📖', 'こくご'], ['🔢', 'さんすう'], ['🌱', 'せいかつ'], ['🎵', 'おんがく'], ['🎨', 'ずこう'], ['🏃', 'たいいく'], ['🧺', 'にちじょう せいかつ'], ['🧩', 'じりつ かつどう'], ['🔤', 'えいご'], ['🔧', 'さぎょう'], ['💻', 'パソコン'], ['📚', 'としょ'], ['🏊', 'プール'], ['⚽', 'そとあそび'], ['🚶', 'さんぽ'], ['🌻', 'しょくぶつ'], ['🍽️', 'きゅうしょく'], ['🛝', 'ひるやすみ'], ['🧹', 'そうじ'], ['🌙', 'かえりの かい']];
+  const WX = [['☀️', 'はれ'], ['🌤️', 'はれ ときどき くもり'], ['☁️', 'くもり'], ['🌧️', 'あめ'], ['⛄', 'ゆき'], ['🌬️', 'かぜが つよい']];
+  const WD = ['にち', 'げつ', 'か', 'すい', 'もく', 'きん', 'ど'], WDC = ['#E03131', '#495057', '#E8590C', '#1C7ED6', '#2B8A3E', '#F08C00', '#1971C2'];
+  const HS = [['😊', 'げんきです', '#40C057'], ['😐', 'すこし わるいです', '#FAB005'], ['😷', 'わるいです', '#FA5252'], ['🏠', 'おやすみ', '#868E96']];
+  const TOPICS = ['すきな たべもの', 'きのう した こと', 'すきな あそび', 'やすみの ひに したい こと', 'すきな どうぶつ', 'きょう がんばりたい こと', 'すきな いろ', 'すきな うた', 'いま ほしい もの', 'すきな きせつ'];
+  const GOALS = ['じぶんから あいさつ しよう', 'さいごまで がんばろう', 'ともだちに やさしく しよう', 'しせいよく すわろう', 'はなしを よく きこう', 'こまったら 「てつだって」と いおう', 'じかんを まもろう'];
+  const ITEMS = {
+    hello: { e: '🙇', n: 'はじめの あいさつ' }, date: { e: '📅', n: 'ひづけ' }, weather: { e: '🌤️', n: 'てんき' }, health: { e: '🩺', n: 'けんこう かんさつ' },
+    sched: { e: '🗓️', n: 'きょうの よてい' }, goal: { e: '🎯', n: 'きょうの めあて' }, speech: { e: '🎤', n: 'ひとこと スピーチ' }, teacher: { e: '🧑‍🏫', n: 'せんせいの おはなし' }, bye: { e: '👋', n: 'おわりの あいさつ' },
+    hello2: { e: '🙇', n: 'はじめの あいさつ' }, reflect: { e: '💖', n: 'きょうの ふりかえり' }, tomorrow: { e: '🗓️', n: 'あしたの よてい' }, bye2: { e: '👋', n: 'さようなら' }
+  };
+  const DEF_AM = ['hello', 'date', 'weather', 'health', 'sched', 'goal', 'speech', 'teacher', 'bye'], DEF_PM = ['hello2', 'reflect', 'tomorrow', 'teacher', 'bye2'];
+  const LIB = [['ひと', [['🐰', 'うさぎ'], ['🐻', 'くま'], ['🐼', 'パンダ'], ['🐱', 'ねこ'], ['🐶', 'いぬ'], ['🦊', 'きつね'], ['🐸', 'かえる'], ['🐧', 'ペンギン'], ['🐯', 'とら'], ['🐨', 'コアラ'], ['🐵', 'さる'], ['🦁', 'ライオン'], ['🐹', 'ハムスター'], ['🐮', 'うし'], ['🐷', 'ぶた'], ['🐤', 'ひよこ'], ['🦄', 'ユニコーン'], ['🐳', 'くじら'], ['🦖', 'きょうりゅう'], ['🚀', 'ロケット']]],
+    ['べんきょう', SUBJ]];
+  const APP = {
+    id: 'asanokai-navi', title: 'あさの かい ナビ', ls: 'asanokai.v1', db: 'mieel-asanokai', sw: true, color: '#F08C00',
+    profHead: '🏫 クラス', profWord: 'クラス', whoTitle: 'どの クラス？',
+    defaults: { readAloud: true, callMode: 'call' },
+    newProfile: (name, icon) => ({ id: 'p' + Math.random().toString(36).slice(2, 9), name: name === 'みんな' ? 'わたしの クラス' : name, icon, roster: [], tt: {}, am: DEF_AM.map(k => ({ k, on: true })), pm: DEF_PM.map(k => ({ k, on: true })), duty: { idx: 0, date: '' }, goal: '', topics: TOPICS.slice(), health: {}, wx: {}, fav: {}, done: {} }),
+    normProfile(p) {
+      p.roster = Array.isArray(p.roster) ? p.roster : []; p.tt = p.tt && typeof p.tt === 'object' ? p.tt : {};
+      const fix = (a, d) => { a = Array.isArray(a) ? a.filter(x => ITEMS[x.k]) : []; d.forEach(k => { if (!a.some(x => x.k === k)) a.push({ k, on: false }); }); return a; };
+      p.am = fix(p.am, DEF_AM); p.pm = fix(p.pm, DEF_PM);
+      if (!p.am.some(x => x.on)) p.am.forEach(x => { x.on = true; }); if (!p.pm.some(x => x.on)) p.pm.forEach(x => { x.on = true; });
+      p.duty = p.duty || { idx: 0, date: '' }; p.goal = p.goal || ''; p.topics = Array.isArray(p.topics) && p.topics.length ? p.topics : TOPICS.slice();
+      ['health', 'wx', 'fav', 'done'].forEach(k => { p[k] = p[k] && typeof p[k] === 'object' ? p[k] : {}; });
+    },
+    childScreens: ['run'], topScreens: ['home', 'setup'],
+    renderHome: () => renderHome(),
+    profileNote: p => p.roster.length + 'にん',
+    onCloseSettings(sc) { if (sc === 'home') renderHome(); else if (sc === 'setup') renderSetup(); },
+    helpNote: 'にっちょくが タブレット（テレビに うつしても よい）を もって、ひかって いる セリフを よみながら すすめます。ことばが でにくい 子は 🔊 で アプリに いって もらって、じぶんは「つぎ」を おす やくわりでも にっちょくが できます。にっちょくは ひが かわると つぎの 子に じどうで かわります。クラスの なまえ・しゃしん・じかんわり・すすめかたは「じゅんび（せんせい）」で せってい します（この たんまつの なかだけに ほぞん）。'
+  };
+const FX = (function () {
+    let cv = null, cx = null, parts = [], raf = 0, last = 0;
+    const COLS = ['#FF6B6B', '#FFA94D', '#FFD43B', '#69DB7C', '#4DABF7', '#9775FA', '#F783AC', '#38D9A9', '#FFFFFF'];
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    const calm = () => document.body.classList.contains('calm') || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+    function ensure() {
+      if (cv) return;
+      cv = document.createElement('canvas');
+      cv.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:44';
+      document.body.appendChild(cv);
+      cx = cv.getContext('2d');
+      const fit = () => { const d = Math.min(window.devicePixelRatio || 1, 2); cv.width = innerWidth * d; cv.height = innerHeight * d; cx.setTransform(d, 0, 0, d, 0, 0); };
+      fit(); window.addEventListener('resize', fit);
+    }
+    function loop(t) {
+      const dt = Math.min(40, t - (last || t)); last = t;
+      cx.clearRect(0, 0, innerWidth, innerHeight);
+      for (let i = parts.length - 1; i >= 0; i--) {
+        const p = parts[i];
+        p.age += dt;
+        if (p.age >= p.life || p.y > innerHeight + 60) { if (p.onEnd) p.onEnd(p); parts.splice(i, 1); continue; }
+        p.vy += (p.g || 0) * dt; p.vx *= p.drag || 1; p.vy *= p.drag || 1;
+        p.x += p.vx * dt; p.y += p.vy * dt; p.rot += (p.vr || 0) * dt;
+        const a = p.fade ? Math.max(0, 1 - p.age / p.life) : 1;
+        cx.globalAlpha = a;
+        if (p.k === 'paper') {   // ひらひら まう かみ
+          const w = Math.cos(p.age / 120 + p.ph);
+          cx.save(); cx.translate(p.x + Math.sin(p.age / 300 + p.ph) * 6, p.y); cx.rotate(p.rot); cx.scale(1, w);
+          cx.fillStyle = p.c; cx.fillRect(-p.s / 2, -p.s / 3, p.s, p.s * 0.66); cx.restore();
+        } else if (p.k === 'ribbon') {  // くるくる リボン
+          cx.strokeStyle = p.c; cx.lineWidth = 3; cx.beginPath();
+          for (let j = 0; j < 6; j++) { const yy = p.y - j * 5, xx = p.x + Math.sin(p.age / 90 + j * .9 + p.ph) * 6; j ? cx.lineTo(xx, yy) : cx.moveTo(xx, yy); }
+          cx.stroke();
+        } else if (p.k === 'spark') {   // はなびの ひかり
+          cx.fillStyle = p.c; cx.beginPath(); cx.arc(p.x, p.y, p.s * (1 - p.age / p.life * .6), 0, 7); cx.fill();
+        } else if (p.k === 'rocket') {
+          cx.fillStyle = '#FFF3BF'; cx.beginPath(); cx.arc(p.x, p.y, 4, 0, 7); cx.fill();
+          cx.globalAlpha = .5; cx.fillStyle = '#FFD43B'; cx.beginPath(); cx.arc(p.x, p.y + 10, 3, 0, 7); cx.fill();
+        } else if (p.k === 'emoji') {
+          cx.save(); cx.translate(p.x, p.y); cx.rotate(p.rot); cx.font = p.s + 'px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
+          cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText(p.t, 0, 0); cx.restore();
+        } else if (p.k === 'ring') {
+          cx.strokeStyle = p.c; cx.lineWidth = 6 * (1 - p.age / p.life); cx.beginPath(); cx.arc(p.x, p.y, p.s + p.age * 0.35, 0, 7); cx.stroke();
+        }
+      }
+      cx.globalAlpha = 1;
+      raf = parts.length ? requestAnimationFrame(loop) : 0;
+      if (!raf) cx.clearRect(0, 0, innerWidth, innerHeight);
+    }
+    function go() { if (!raf) { last = 0; raf = requestAnimationFrame(loop); } }
+    const P = o => { parts.push(Object.assign({ age: 0, rot: 0, ph: Math.random() * 6 }, o)); };
+    function burst(x, y, n, speed, kinds) {
+      for (let i = 0; i < n; i++) {
+        const a = Math.random() * Math.PI * 2, v = rnd(speed * .4, speed);
+        const k = kinds[i % kinds.length];
+        if (k === 'paper') P({ k: 'paper', x: x, y: y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - .2, g: .0009, drag: .985, vr: rnd(-.01, .01), s: rnd(8, 14), c: COLS[i % COLS.length], life: 2600 });
+        else P({ k: 'spark', x: x, y: y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, g: .0003, drag: .975, s: rnd(2.5, 4.5), c: COLS[i % 8], life: 900, fade: true });
+      }
+      go();
+    }
+    /* ---- 音 ---- */
+    let ac = null;
+    function A() { try { if (!ac) ac = new (window.AudioContext || window.webkitAudioContext)(); if (ac.state === 'suspended') ac.resume(); return ac; } catch (e) { return null; } }
+    function noise(dur, vol, f0, f1, delay) {
+      const a = A(); if (!a || !FX.sound()) return;
+      const n = Math.floor(a.sampleRate * dur), b = a.createBuffer(1, n, a.sampleRate), d = b.getChannelData(0);
+      for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 2.5);
+      const s = a.createBufferSource(), fl = a.createBiquadFilter(), g = a.createGain(), t = a.currentTime + (delay || 0);
+      s.buffer = b; fl.type = 'bandpass'; fl.Q.value = 0.8; fl.frequency.setValueAtTime(f0, t); if (f1) fl.frequency.exponentialRampToValueAtTime(f1, t + dur);
+      g.gain.value = vol * FX.volume(); s.connect(fl); fl.connect(g); g.connect(a.destination); s.start(t);
+    }
+    function popSound(delay) { noise(0.25, 1.4, 2200, 500, delay); }
+    function boomSound(delay) { noise(0.9, 0.9, 700, 90, delay); }
+    function whistle(delay) {
+      const a = A(); if (!a || !FX.sound()) return;
+      const o = a.createOscillator(), g = a.createGain(), t = a.currentTime + delay;
+      o.type = 'sine'; o.frequency.setValueAtTime(600, t); o.frequency.exponentialRampToValueAtTime(1800, t + .6);
+      g.gain.setValueAtTime(.0001, t); g.gain.linearRampToValueAtTime(.06 * FX.volume(), t + .05); g.gain.exponentialRampToValueAtTime(.0001, t + .65);
+      o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + .7);
+    }
+    function clap(delay, dur) { for (let i = 0; i < dur * 14; i++) noise(0.06, rnd(.3, .7), rnd(900, 2200), 0, delay + i / 14 + rnd(0, .05)); }
+
+    // クラッカー（がめんの したの すみから）
+    function cracker(side, delay) {
+      setTimeout(() => {
+        const x = side < 0 ? 40 : innerWidth - 40, y = innerHeight - 40, dir = side < 0 ? 1 : -1;
+        P({ k: 'emoji', t: '🎉', x: x, y: y, s: 90, rot: side < 0 ? 0 : -1.4, life: 1100, fade: true });
+        for (let i = 0; i < 90; i++) {
+          const a = -Math.PI / 2 + dir * rnd(.15, .85), v = rnd(.7, 1.45);
+          P({ k: i % 5 ? 'paper' : 'ribbon', x: x, y: y - 30, vx: Math.cos(a) * v, vy: Math.sin(a) * v, g: .0011, drag: .986, vr: rnd(-.012, .012), s: rnd(9, 15), c: COLS[i % COLS.length], life: 3600 });
+        }
+        popSound(0); go();
+      }, delay);
+    }
+    function firework(x, y, delay) {
+      setTimeout(() => {
+        P({ k: 'rocket', x: x, y: innerHeight, vx: 0, vy: -(innerHeight - y) / 600, life: 600, onEnd: p => { burst(p.x, p.y, 70, .45, ['spark', 'spark', 'spark', 'paper']); P({ k: 'ring', x: p.x, y: p.y, s: 10, c: '#FFE066', life: 500, fade: true }); boomSound(0); } });
+        whistle(0); go();
+      }, delay);
+    }
+    return {
+      sound: () => true, volume: () => 1,
+      small(el, opt) {
+        if (calm() || !el) return;
+        ensure();
+        const r = el.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
+        const v = (opt && opt.variant) != null ? opt.variant : Math.floor(Math.random() * 5);
+        if (v === 0) burst(x, y, 40, .6, ['paper']);
+        else if (v === 1) { for (let i = 0; i < 10; i++) { const a = i / 10 * 6.28; P({ k: 'emoji', t: '⭐', x: x, y: y, vx: Math.cos(a) * .35, vy: Math.sin(a) * .35, g: .0004, s: 34, vr: .01, life: 900, fade: true }); } go(); }
+        else if (v === 2) { for (let i = 0; i < 8; i++) P({ k: 'emoji', t: pick2(['💖', '💗', '💕']), x: x + rnd(-40, 40), y: y, vx: rnd(-.08, .08), vy: rnd(-.45, -.25), s: rnd(28, 44), life: 1300, fade: true }); go(); }
+        else if (v === 3) { P({ k: 'ring', x: x, y: y, s: r.width * .3, c: '#FFD43B', life: 600, fade: true }); P({ k: 'ring', x: x, y: y, s: r.width * .2, c: '#69DB7C', life: 700, fade: true }); burst(x, y, 30, .5, ['spark']); }
+        else { for (let i = 0; i < 12; i++) P({ k: 'emoji', t: pick2(['✨', '🌟', '🎵', '🍀']), x: x, y: y, vx: rnd(-.5, .5), vy: rnd(-.7, -.3), g: .0012, s: rnd(26, 40), vr: rnd(-.01, .01), life: 1200, fade: true }); go(); }
+      },
+      big() {
+        if (calm()) return;
+        ensure();
+        cracker(-1, 0); cracker(1, 180);
+        const W = innerWidth, H = innerHeight;
+        firework(W * .25, H * .25, 700); firework(W * .72, H * .2, 1100); firework(W * .5, H * .32, 1500); firework(W * .35, H * .18, 1900);
+        setTimeout(() => { for (let i = 0; i < 120; i++) P({ k: i % 6 ? 'paper' : 'ribbon', x: rnd(0, W), y: rnd(-H * .6, -10), vx: rnd(-.05, .05), vy: rnd(.08, .22), g: .00004, vr: rnd(-.01, .01), s: rnd(9, 15), c: COLS[i % COLS.length], life: 6000 }); go(); }, 1200);
+        clap(0.4, 2.2);
+      }
+    };
+    function pick2(a) { return a[Math.floor(Math.random() * a.length)]; }
+  })();
+  /* ============================================================
+     MieeL アプリ きょうつう（base.js）
+     APP = { id, title, ls, db, defaults, newProfile(name, icon), normProfile(p), childScreens, topScreens,
+             renderHome(), renderSettings(add, st, vp, refresh), onCloseSettings(screen) }
+     ============================================================ */
+  const $ = s => document.querySelector(s);
+  const uid = () => Math.random().toString(36).slice(2, 10);
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  const ri = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+  const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const todayStr = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+  function load(k) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch (e) { return null; } }
+  function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }
+  const BASE_DEFAULTS = { voice: true, sound: true, volume: 0.8, rate: 0.95, calm: false };
+  const ICONS = ['🐰', '🐻', '🐼', '🐱', '🐶', '🦊', '🐸', '🐧', '🐯', '🐨', '🐵', '🦁', '🐹', '🐮', '🐷', '🐤'];
+  function normalize(s) {
+    s = s && typeof s === 'object' ? s : {};
+    const o = Object.assign({}, s, { profiles: Array.isArray(s.profiles) && s.profiles.length ? s.profiles : [APP.newProfile('みんな', '🐰')], currentId: s.currentId || null, settings: Object.assign({}, BASE_DEFAULTS, APP.defaults || {}, s.settings || {}) });
+    o.profiles.forEach(p => { p.id = p.id || 'p' + uid(); p.name = p.name || 'なまえ'; p.icon = p.icon || '🐰'; if (APP.normProfile) APP.normProfile(p); });
+    if (!o.profiles.some(p => p.id === o.currentId)) o.currentId = o.profiles[0].id;
+    if (APP.normStore) APP.normStore(o);
+    return o;
+  }
+  let store = normalize(load(APP.ls));
+  const S = () => store.settings;
+  let saveT = 0;
+  function persist() { clearTimeout(saveT); if (!save(APP.ls, store)) toast('保存できませんでした（容量を確認してください）'); }
+  function persistSoon() { clearTimeout(saveT); saveT = setTimeout(persist, 350); }
+  const cur = () => store.profiles.find(p => p.id === store.currentId) || store.profiles[0];
+
+  function h(tag, props) {
+    const el = document.createElement(tag);
+    if (props) Object.keys(props).forEach(k => {
+      const v = props[k];
+      if (v === null || v === undefined || v === false) return;
+      if (k === 'class') el.className = v;
+      else if (k === 'html') el.innerHTML = v;
+      else if (k === 'value') el.value = v;
+      else if (k.slice(0, 2) === 'on') el.addEventListener(k.slice(2), v);
+      else el.setAttribute(k, v === true ? '' : v);
+    });
+    (function add(list) { list.forEach(c => { if (c === null || c === undefined || c === false) return; if (Array.isArray(c)) add(c); else el.appendChild(typeof c === 'string' || typeof c === 'number' ? document.createTextNode(String(c)) : c); }); })(Array.prototype.slice.call(arguments, 2));
+    return el;
+  }
+  const E = (e, cls) => h('span', { class: 'emo' + (cls ? ' ' + cls : '') }, e);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  let toastTimer = 0;
+  function toast(m, ms) { const t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), ms || 2600); }
+  let lockUntil = 0;
+  function tapOk(ms) { const n = Date.now(); if (n < lockUntil) return false; lockUntil = n + (ms || 350); return true; }
+  let gen = 0; const timers = new Set(); let stops = [];
+  function after(ms, fn) { const g = gen; const id = setTimeout(() => { timers.delete(id); if (g === gen) fn(); }, ms); timers.add(id); return id; }
+  function every(ms, fn) { const g = gen; const id = setInterval(() => { if (g !== gen) { clearInterval(id); return; } fn(); }, ms); return id; }
+  const wait = ms => new Promise(r => after(ms, r));
+  function onStop(fn) { stops.push(fn); }
+  function stopAll() { gen++; timers.forEach(clearTimeout); timers.clear(); const s = stops; stops = []; s.forEach(f => { try { f(); } catch (e) { /* 無視 */ } }); stopSpeak(); document.querySelectorAll('.ov').forEach(x => x.remove()); }
+  function longPress(el, ms, fn) {
+    let t = 0;
+    el.addEventListener('pointerdown', e => { e.preventDefault(); el.classList.add('pressing'); t = setTimeout(() => { el.classList.remove('pressing'); fn(); }, ms); });
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => el.addEventListener(ev, () => { clearTimeout(t); el.classList.remove('pressing'); }));
+    el.addEventListener('contextmenu', e => e.preventDefault());
+  }
+  function quitBtn(fn, label) { const b = h('button', { type: 'button', class: 'quit', 'aria-label': 'とちゅうで おわる（ながおし）' }, h('i'), h('span', null, label || '✕ おわる（ながおし）')); longPress(b, 1500, fn); return b; }
+
+  /* ---- 音・よみあげ ---- */
+  let ac = null;
+  function actx() { try { if (!ac) { const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null; ac = new AC(); } if (ac.state === 'suspended') ac.resume(); return ac; } catch (e) { return null; } }
+  function audio() { return S().sound ? actx() : null; }
+  function tone(f, st, dur, type, vol, f2) {
+    const a = audio(); if (!a) return;
+    const t = a.currentTime + st, o = a.createOscillator(), g = a.createGain();
+    o.type = type || 'sine'; o.frequency.setValueAtTime(f, t); if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + dur);
+    g.gain.setValueAtTime(.0001, t); g.gain.linearRampToValueAtTime((vol || .2) * S().volume, t + .015); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + .05);
+  }
+  const sfx = {
+    tap() { tone(700, 0, .07, 'triangle', .13); },
+    ok() { tone(880, 0, .12, 'triangle', .24); tone(1319, .09, .28, 'triangle', .2); },
+    ng() { tone(330, 0, .16, 'sine', .14); tone(294, .12, .2, 'sine', .12); },
+    step(i) { tone([659, 784, 880, 988, 1047, 1175][(i || 0) % 6], 0, .16, 'triangle', .2); },
+    page() { tone(523, 0, .1, 'sine', .12, 784); },
+    bell() { tone(1046, 0, 1.4, 'sine', .2); tone(1568, .02, 1.1, 'sine', .07); },
+    clear() { [523, 659, 784, 1047].forEach((f, i) => tone(f, i * .09, .28, 'triangle', .24)); }
+  };
+  const EMBED = /[?&]embed=1/.test(location.search);
+  const TEST = /[?&]test=1/.test(location.search);
+  const canSpeak = 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
+  let jaVoice = null;
+  function loadVoice() { if (!canSpeak) return; const v = (speechSynthesis.getVoices() || []).filter(x => /^ja(-|_|$)/i.test(x.lang)); jaVoice = v.find(x => /Kyoko|O-ren|Otoya|Hattori|Nanami/i.test(x.name)) || v.find(x => x.localService) || v[0] || null; }
+  function speak(text, opt) {
+    opt = opt || {};
+    if (!canSpeak || !S().voice || !text || EMBED) { if (opt.end) setTimeout(opt.end, 30); return null; }
+    try {
+      if (!opt.keep) speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(jaSay(text)); u.lang = 'ja-JP'; u.rate = (Number(S().rate) || .95) * (opt.rate || 1); u.pitch = opt.pitch || 1.05; if (jaVoice) u.voice = jaVoice;
+      if (opt.end) u.onend = opt.end;
+      speechSynthesis.speak(u); return u;
+    } catch (e) { if (opt.end) setTimeout(opt.end, 30); return null; }
+  }
+  function stopSpeak() { if (canSpeak) { try { speechSynthesis.cancel(); } catch (e) { /* 無視 */ } } }
+  function praise(t) {
+    if (document.body.classList.contains('calm')) return;
+    const p = h('div', { class: 'praise' }, t || pick(['すごい！', 'できたね！', 'じょうず！', 'ばっちり！', 'いいね！', 'さすが！']));
+    p.style.color = pick(['#F76707', '#E64980', '#1C7ED6', '#2F9E44', '#7048E8', '#F59F00']);
+    document.body.appendChild(p); setTimeout(() => p.remove(), 1300);
+  }
+  let wake = null;
+  async function keepAwake() { try { if ('wakeLock' in navigator && !wake) { wake = await navigator.wakeLock.request('screen'); wake.addEventListener('release', () => { wake = null; }); } } catch (e) { /* 無視 */ } }
+  FX.sound = () => S().sound; FX.volume = () => Number(S().volume) || 0.8;
+
+  /* ---- しゃしん・ろくおん（この たんまつの IndexedDB だけ。おくらない） ---- */
+  const DB = {
+    db: null,
+    open() { if (this.db) return Promise.resolve(this.db); return new Promise((res, rej) => { const r = indexedDB.open(APP.db || ('mieel-' + APP.id), 1); r.onupgradeneeded = () => r.result.createObjectStore('media', { keyPath: 'id' }); r.onsuccess = () => { this.db = r.result; res(this.db); }; r.onerror = () => rej(r.error); }); },
+    async get(id) { const d = await this.open(); return new Promise((res, rej) => { const q = d.transaction('media').objectStore('media').get(id); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }); },
+    async all() { const d = await this.open(); return new Promise((res, rej) => { const q = d.transaction('media').objectStore('media').getAll(); q.onsuccess = () => res(q.result || []); q.onerror = () => rej(q.error); }); },
+    async put(v) { const d = await this.open(); return new Promise((res, rej) => { const tx = d.transaction('media', 'readwrite'); tx.objectStore('media').put(v); tx.oncomplete = () => res(); tx.onerror = () => rej(tx.error); }); },
+    async del(id) { const d = await this.open(); return new Promise((res, rej) => { const tx = d.transaction('media', 'readwrite'); tx.objectStore('media').delete(id); tx.oncomplete = () => res(); tx.onerror = () => rej(tx.error); }); },
+    async clear() { const d = await this.open(); return new Promise((res, rej) => { const tx = d.transaction('media', 'readwrite'); tx.objectStore('media').clear(); tx.oncomplete = () => res(); tx.onerror = () => rej(tx.error); }); }
+  };
+  const URLS = {};
+  async function mediaURL(id) { if (!id) return null; if (URLS[id]) return URLS[id]; try { const m = await DB.get(id); if (!m) return null; URLS[id] = URL.createObjectURL(m.blob); return URLS[id]; } catch (e) { return null; } }
+  function pickFile(accept, capture, multiple) {
+    return new Promise(res => {
+      const fi = $('#fileIn'); fi.value = ''; fi.accept = accept; fi.multiple = !!multiple;
+      if (capture) fi.setAttribute('capture', capture); else fi.removeAttribute('capture');
+      fi.onchange = () => res(fi.files && fi.files.length ? Array.from(fi.files) : null);
+      fi.click();
+    });
+  }
+  async function savePhoto(file, max) {
+    const url = URL.createObjectURL(file), im = new Image(); im.src = url;
+    await new Promise(r => { im.onload = r; im.onerror = r; });
+    const k = Math.min(1, (max || 900) / Math.max(im.width || 1, im.height || 1)), c = document.createElement('canvas');
+    c.width = Math.max(1, Math.round((im.width || 1) * k)); c.height = Math.max(1, Math.round((im.height || 1) * k));
+    c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+    const blob = await new Promise(r => c.toBlob(b => r(b), 'image/jpeg', 0.82));
+    const id = 'm' + uid(); await DB.put({ id, blob, kind: 'img', at: Date.now() }); return id;
+  }
+  const blobToData = b => new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.onerror = () => r(null); fr.readAsDataURL(b); });
+  async function mediaData(id) { if (!id) return null; try { const m = await DB.get(id); return m ? await blobToData(m.blob) : null; } catch (e) { return null; } }
+  // せんせいの こえ・こどもの こえを ろくおん（もういちど おすと とまる・さいだい 20びょう）
+  let recorder = null;
+  async function recordToggle(btn, done, maxSec) {
+    if (recorder) { try { recorder.stop(); } catch (e) { /* 無視 */ } return; }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mime = ['audio/mp4', 'audio/webm', ''].find(m => !m || (window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(m)));
+      const r = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined); recorder = r;
+      const chunks = [];
+      r.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+      r.onstop = async () => { stream.getTracks().forEach(t => t.stop()); if (btn) btn.classList.remove('on'); recorder = null; const blob = new Blob(chunks, { type: r.mimeType || 'audio/mp4' }); if (blob.size > 300) { const id = 'a' + uid(); await DB.put({ id, blob, kind: 'audio', at: Date.now() }); done(id); } };
+      r.start(); if (btn) btn.classList.add('on'); toast('🔴 ろくおん ちゅう… もう いちど おすと とまります', 3000);
+      setTimeout(() => { if (recorder === r) r.stop(); }, (maxSec || 20) * 1000);
+    } catch (e) { recorder = null; toast('マイクが つかえません（マイクを 許可して ください）', 3500); }
+  }
+  let playing = null;
+  async function playMedia(id, end) { const u = await mediaURL(id); if (!u) { if (end) end(); return false; } stopSpeak(); if (playing) playing.pause(); playing = new Audio(u); playing.onended = () => { playing = null; if (end) end(); }; try { await playing.play(); } catch (e) { if (end) end(); } return true; }
+  function pic(it, cls) {
+    const w = h('div', { class: 'pic' + (cls ? ' ' + cls : '') }, E(it && it.emoji || '📷'));
+    if (it && it.media) mediaURL(it.media).then(u => { if (u) { w.innerHTML = ''; w.append(h('img', { src: u, alt: '' })); } });
+    return w;
+  }
+  async function picHTML(it) { const d = it && it.media ? await mediaData(it.media) : null; return d ? '<img src="' + d + '" alt="">' : '<span class="pe">' + esc(it && it.emoji || '') + '</span>'; }
+
+  /* ---- がめん・ヘッダー ---- */
+  let screen = 'home';
+  function setView(cls, children) { stopAll(); const v = $('#view'); v.innerHTML = ''; v.appendChild(h('section', { class: 'screen ' + cls }, children)); chips(); }
+  function chips() {
+    const p = cur(), c = $('#whoChip'), hb = $('#homeBtn'), child = (APP.childScreens || []).indexOf(screen) >= 0;
+    if ($('#printBtn')) $('#printBtn').hidden = (APP.topScreens || ['home']).indexOf(screen) < 0;
+    hb.hidden = screen === 'home' || screen === 'who';
+    $('#homeLbl').textContent = child ? 'ながおし' : 'さいしょ';
+    c.hidden = store.profiles.length < 2 || child || screen === 'who';
+    c.innerHTML = ''; c.append(E(p.icon), p.name);
+    if (APP.chips) APP.chips(screen);
+  }
+  function renderWho() {
+    screen = 'who';
+    setView('who home', [h('h1', { class: 'title' }, APP.whoTitle || 'だれが つかう？'), h('div', { class: 'menu' }, store.profiles.map(p => h('button', { type: 'button', class: 'mcard', style: '--c:' + (APP.color || '#1C7ED6'), onclick: () => { if (!tapOk()) return; sfx.tap(); speak(p.name); store.currentId = p.id; persist(); APP.renderHome(); } }, E(p.icon), h('b', null, p.name))))]);
+  }
+  (function () {
+    const b = $('#homeBtn'); let t = 0;
+    b.addEventListener('pointerdown', e => { e.preventDefault(); if ((APP.childScreens || []).indexOf(screen) < 0) return; b.classList.add('pressing'); t = setTimeout(() => { b.classList.remove('pressing'); APP.renderHome(); }, 1200); });
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => b.addEventListener(ev, () => { clearTimeout(t); b.classList.remove('pressing'); }));
+    b.addEventListener('click', () => { if ((APP.childScreens || []).indexOf(screen) < 0 && tapOk()) { sfx.tap(); if (APP.beforeHome && APP.beforeHome() === false) return; APP.renderHome(); } });
+    $('#whoChip').addEventListener('click', () => { if ((APP.childScreens || []).indexOf(screen) < 0) renderWho(); });
+  })();
+
+  /* ---- 先生用せってい ---- */
+  function seg(value, opts, onPick) { return h('div', { class: 'seg' }, opts.map(o => h('button', { type: 'button', class: String(o[0]) === String(value) ? 'on' : '', onclick: () => onPick(o[0]) }, o[1]))); }
+  const srow = (label, ctl, note) => h('div', { class: 'srow' }, h('div', null, label, note ? h('div', { class: 'note' }, note) : null), ctl);
+  const chk = (label, k, note) => h('label', { class: 'row' }, h('span', null, label, note ? h('div', { class: 'note' }, note) : null), h('input', { type: 'checkbox', checked: !!S()[k], onchange: e => { S()[k] = e.target.checked; persist(); } }));
+  let viewPid = null;
+  function openSettings() { stopSpeak(); renderSettings(); $('#settings').classList.add('open'); $('#settings').scrollTop = 0; }
+  function closeSettings() { persist(); $('#settings').classList.remove('open'); document.body.classList.toggle('calm', !!S().calm); if (APP.onCloseSettings) APP.onCloseSettings(screen); else if (screen === 'home') APP.renderHome(); chips(); }
+  function refreshSettings() { const m = $('#settings'), y = m.scrollTop; renderSettings(); m.scrollTop = y; }
+  const setS = (k, v) => { S()[k] = v; persist(); refreshSettings(); };
+  function renderSettings() {
+    const P = $('#settingsPanel'); P.innerHTML = '';
+    const add = (...a) => P.append(...a.filter(Boolean));
+    const st = S();
+    if (!store.profiles.some(p => p.id === viewPid)) viewPid = store.currentId;
+    const vp = store.profiles.find(p => p.id === viewPid);
+    add(h('div', { class: 'panel-head' }, h('h2', null, '⚙️ 先生用せってい'), h('button', { type: 'button', class: 'btn ok', onclick: closeSettings }, '✓ とじる')),
+      h('p', { class: 'note' }, 'この画面は 右上の ⚙️ を 1.5秒 ながおし すると ひらきます。変更は すぐに保存されます（この端末のみ）。'));
+    add(h('h3', null, APP.profHead || '👦 つかう 子ども'));
+    store.profiles.forEach((p, i) => add(h('div', { class: 'prow' },
+      h('button', { type: 'button', class: 'mini-btn', onclick: () => { p.icon = ICONS[(ICONS.indexOf(p.icon) + 1) % ICONS.length]; persist(); refreshSettings(); } }, E(p.icon)),
+      h('input', { type: 'text', value: p.name, style: 'flex:1;min-width:140px', oninput: e => { p.name = e.target.value; persistSoon(); } }),
+      APP.profileNote ? h('span', { class: 'note' }, APP.profileNote(p)) : null,
+      store.profiles.length > 1 ? h('button', { type: 'button', class: 'mini-btn warn', onclick: () => { if (confirm(p.name + ' を けしますか？（きろくも きえます）')) { store.profiles.splice(i, 1); if (store.currentId === p.id) store.currentId = store.profiles[0].id; persist(); refreshSettings(); } } }, 'けす') : null)));
+    add(h('div', { class: 'btns' }, h('button', { type: 'button', class: 'btn primary', onclick: () => { const np = APP.newProfile('なまえ' + (store.profiles.length + 1), ICONS[store.profiles.length % ICONS.length]); if (APP.normProfile) APP.normProfile(np); store.profiles.push(np); viewPid = np.id; persist(); refreshSettings(); } }, '＋ ' + (APP.profWord || '子ども') + 'を ふやす')),
+      h('p', { class: 'note' }, '2つ いじょう あると、はじめに「' + (APP.whoTitle || 'だれが つかう？') + '」が でます。'));
+    const pidSel = () => store.profiles.length > 1 ? srow(APP.profWord || '子ども', h('select', { onchange: e => { viewPid = e.target.value; refreshSettings(); } }, store.profiles.map(p => h('option', { value: p.id, selected: p.id === viewPid }, p.name)))) : null;
+    APP.renderSettings(add, st, vp, pidSel);
+    add(h('h3', null, '🔊 おと・ひょうじ'), chk('よみあげ', 'voice'), chk('こうかおん', 'sound'),
+      srow('おおきさ', h('input', { type: 'range', min: '0.2', max: '1', step: '0.1', value: st.volume, onchange: e => { st.volume = Number(e.target.value); persist(); } })),
+      srow('よみあげの はやさ', seg(st.rate, [[0.8, 'ゆっくり'], [0.95, 'ふつう'], [1.1, 'はやめ']], v => setS('rate', Number(v)))),
+      chk('うごきを ひかえめに（はなび なし）', 'calm'));
+    if (window.MieelPrintAPI && $('#printBtn')) add(h('h3', null, '🖨️ プリント（A4）'),
+      h('div', { class: 'btns' }, h('button', { type: 'button', class: 'btn primary', onclick: () => { closeSettings(); PrintUI.open(); } }, '🖨️ プリントの 画面を ひらく')),
+      h('p', { class: 'note' }, '上の 🖨️ プリント ボタンからも ひらけます。みほんと おなじ ものが いんさつ されます。'));
+    if (APP.db !== false) add(h('h3', null, '🔒 データ（この たんまつの なかだけ）'),
+      h('p', { class: 'note' }, 'しゃしん・ろくおん・きろくは この たんまつ（ブラウザ）の なかだけに ほぞん され、インターネットには おくりません。ほかの たんまつへの いどうや バックアップは「ファイルに かきだす」で。'),
+      h('div', { class: 'btns' }, h('button', { type: 'button', class: 'btn primary', onclick: exportData }, '⬇ ファイルに かきだす'), h('button', { type: 'button', class: 'btn', onclick: importData }, '⬆ ファイルから よみこむ')));
+    if (APP.helpNote) add(h('h3', null, '💡 このアプリの かんがえかた'), h('p', { class: 'note' }, APP.helpNote));
+    add(h('div', { class: 'btns', style: 'margin-top:20px' }, h('button', { type: 'button', class: 'btn ok', onclick: closeSettings }, '✓ とじる')));
+    add(h('div', { class: 'mieel-foot' }, h('div', { class: 'mieel-brand' }, h('span', { class: 'orb-mini' }), h('strong', null, 'MieeL')),
+      h('a', { href: 'https://www.mieel-support-school.com/', target: '_blank', rel: 'noopener' }, 'www.mieel-support-school.com'),
+      h('div', null, '© ' + APP.title + '（特別支援教育向け）・学校や家庭での利用は自由です（無断転載・再配布・販売はお断り）')));
+  }
+  async function exportData() {
+    const media = [];
+    try { for (const m of await DB.all()) media.push({ id: m.id, kind: m.kind, at: m.at, data: await blobToData(m.blob) }); } catch (e) { /* 無視 */ }
+    const blob = new Blob([JSON.stringify({ app: APP.id, v: 1, store, media })], { type: 'application/json' });
+    const d = new Date(), name = APP.title.replace(/\s/g, '') + '_' + d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0') + '.json';
+    const a = h('a', { href: URL.createObjectURL(blob), download: name }); document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+    toast('ファイルに かきだしました');
+  }
+  async function importData() {
+    const fs = await pickFile('application/json,.json'); if (!fs) return;
+    try {
+      const j = JSON.parse(await fs[0].text());
+      if (j.app !== APP.id) throw new Error('x');
+      if (!confirm('いまの データを、この ファイルの なかみに おきかえますか？')) return;
+      await DB.clear();
+      for (const m of j.media || []) { const r = await fetch(m.data); await DB.put({ id: m.id, kind: m.kind, at: m.at || Date.now(), blob: await r.blob() }); }
+      store = normalize(j.store); persist(); Object.keys(URLS).forEach(k => delete URLS[k]);
+      toast('よみこみました'); refreshSettings(); APP.renderHome();
+    } catch (e) { toast('この ファイルは よみこめません'); }
+  }
+  (function () {
+    const g = $('#gear'); let t = 0;
+    g.addEventListener('pointerdown', e => { e.preventDefault(); g.classList.add('pressing'); t = setTimeout(() => { g.classList.remove('pressing'); openSettings(); }, 1500); });
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => g.addEventListener(ev, () => { clearTimeout(t); g.classList.remove('pressing'); }));
+    g.addEventListener('contextmenu', e => e.preventDefault());
+    $('#settings').addEventListener('click', e => { if (e.target.id === 'settings') closeSettings(); });
+    document.addEventListener('visibilitychange', () => { if (document.hidden) stopSpeak(); });
+  })();
+  function startApp() {
+    document.body.classList.toggle('calm', !!S().calm);
+    if (canSpeak) { loadVoice(); if ('onvoiceschanged' in speechSynthesis) speechSynthesis.onvoiceschanged = loadVoice; }
+    if (APP.sw && 'serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost') && !EMBED) navigator.serviceWorker.register('sw.js').catch(() => {});
+    if (store.profiles.length > 1 && !EMBED) renderWho(); else APP.renderHome();
+  }
+
+  /* ============================================================
+     🖨️ プリントの 画面（ほかの MieeL アプリと おなじ かたち：ひだりに せってい、みぎに A4 の みほん）
+     みほんと おなじ ものが いんさつ されます。
+     ============================================================ */
+  const PrintUI = (function () {
+    const MM = 96 / 25.4;
+    let st = null, pages = [], custom = null;
+    function types() { return window.MieelPrintAPI.list({ all: true }); }
+    function ensure() {
+      const list = types();
+      if (!st || !list.some(t => t.id === st.type)) st = { type: list[0].id, v: {} };
+      const t = list.find(x => x.id === st.type);
+      t.params.forEach(p => { if (st.v[p.key] === undefined || !p.opts.some(o => String(o[0]) === String(st.v[p.key]))) st.v[p.key] = p.def; });
+      return t;
+    }
+    function build() { ensure(); return window.MieelPrintAPI.build(st.type, Object.assign({}, st.v)).then(r => { pages = r.pages; }); }
+    // きまった ページ（つくった はっぴょう など）を みほんつきで いんさつ
+    function openPages(title, arr) { stopSpeak(); custom = { title, pages: arr }; pages = arr; $('#printModal').classList.add('open'); $('#printModal').scrollTop = 0; render(); }
+    function open(type, preset) {
+      stopSpeak(); custom = null;
+      if (type) { ensure(); st.type = type; }
+      if (preset) Object.assign(st.v, preset);
+      $('#printModal').classList.add('open'); $('#printModal').scrollTop = 0;
+      build().then(render);
+    }
+    function close() { $('#printModal').classList.remove('open'); }
+    function render() {
+      const t = custom ? null : ensure();
+      const P = $('#printPanel'); P.innerHTML = '';
+      const re = () => build().then(render);
+      const seg = (label, cur, opts, on, cls) => [h('div', { class: 'seglabel' }, label), h('div', { class: 'seg' + (cls ? ' ' + cls : '') }, opts.map(o => h('button', { type: 'button', class: String(cur) === String(o[0]) ? 'on' : '', onclick: () => on(o[0]) }, o[1])))];
+      const prev = h('div', { class: 'prprev' });
+      P.append(
+        h('div', { class: 'panel-head' }, h('h2', null, '🖨️ A4 プリント'), h('button', { type: 'button', class: 'btn ok', onclick: close }, 'とじる')),
+        h('div', { class: 'prgrid' },
+          custom ? h('div', { class: 'prctl' }, h('div', { class: 'seglabel' }, custom.title),
+            h('div', { class: 'btns', style: 'margin-top:16px' }, h('button', { type: 'button', class: 'btn blue', onclick: doIt }, '🖨️ いんさつ する')),
+            h('p', { class: 'note' }, 'いんさつの せってい：よう紙 A4・たて、よはく「なし」（または さいしょう）、「背景の グラフィック」オンが おすすめです。'))
+          : h('div', { class: 'prctl' },
+            seg('プリントの しゅるい', st.type, types().map(x => [x.id, (x.icon ? x.icon + ' ' : '') + x.name]), v => { st.type = v; re(); }, 'types'),
+            t.params.map(p => p.opts.length > 6
+              ? [h('div', { class: 'seglabel' }, p.label), h('select', { style: 'width:100%', onchange: e => { const o = p.opts.find(x => String(x[0]) === e.target.value); st.v[p.key] = o ? o[0] : e.target.value; re(); } }, p.opts.map(o => h('option', { value: String(o[0]), selected: String(o[0]) === String(st.v[p.key]) }, o[1])))]
+              : seg(p.label, st.v[p.key], p.opts, v => { st.v[p.key] = v; re(); })),
+            h('div', { class: 'btns', style: 'margin-top:16px' },
+              window.MieelPrintAPI.fixed ? null : h('button', { type: 'button', class: 'btn', onclick: re }, '🔄 べつの もんだい'),
+              h('button', { type: 'button', class: 'btn blue', onclick: doIt }, '🖨️ いんさつ する')),
+            h('p', { class: 'note' }, 'いんさつの せってい：よう紙 A4・たて、よはく「なし」（または さいしょう）、「背景の グラフィック」オンが おすすめです。'),
+            h('p', { class: 'note' }, pages.length + 'まい（みほんと おなじ ものが いんさつ されます）')),
+          prev));
+      const W = Math.max(240, (prev.clientWidth || 600) - 24), sc = Math.min(1, W / (210 * MM));
+      pages.forEach(pg => {
+        const w = h('div', { class: 'pwrap', style: 'width:' + (210 * MM * sc) + 'px;height:' + (297 * MM * sc) + 'px', html: pg });
+        w.firstChild.style.transform = 'scale(' + sc + ')';
+        prev.appendChild(w);
+      });
+    }
+    function doIt() { const root = $('#printRoot'); root.innerHTML = pages.join(''); setTimeout(() => window.print(), 60); }
+    window.addEventListener('afterprint', () => { $('#printRoot').innerHTML = ''; });
+    $('#printModal').addEventListener('click', e => { if (e.target.id === 'printModal') close(); });
+    $('#printBtn').addEventListener('click', () => { if (tapOk(500)) open(); });
+    return { open, openPages, close };
+  })();
+
+
+  /* ============================================================
+     きょうの じょうほう
+     ============================================================ */
+  const now = () => new Date();
+  const ymd = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  const ttOf = (p, wd) => (p.tt[wd] || []);
+  function nextSchoolDay(d) { const x = new Date(d); do { x.setDate(x.getDate() + 1); } while (x.getDay() === 0 || x.getDay() === 6); return x; }
+  // にっちょく：ひが かわったら つぎの 子へ
+  function dutyUpdate(p) {
+    const t = todayStr();
+    if (!p.roster.length) return;
+    if (p.duty.date && p.duty.date !== t) p.duty.idx = (p.duty.idx + 1) % p.roster.length;
+    p.duty.date = t; p.duty.idx %= p.roster.length; persist();
+  }
+  const dutyOf = p => p.roster.length ? p.roster[p.duty.idx % p.roster.length] : null;
+  const san = m => m.name + (/(さん|くん|ちゃん|せんせい)$/.test(m.name) ? '' : 'さん');
+  async function cleanMedia() { const used = new Set(); store.profiles.forEach(p => p.roster.forEach(m => { if (m.media) used.add(m.media); })); try { for (const m of await DB.all()) if (!used.has(m.id) && Date.now() - m.at > 60000) await DB.del(m.id); } catch (e) { /* 無視 */ } }
+
+  /* ============================================================
+     ホーム
+     ============================================================ */
+  function renderHome() {
+    screen = 'home';
+    const p = cur(); dutyUpdate(p);
+    const d = now(), du = dutyOf(p), am = d.getHours() < 12;
+    const tcard = h('button', { type: 'button', class: 'mcard', style: '--c:#7048E8' }, h('i', { class: 'lp' }), E('🛠️'), h('b', null, 'じゅんび'), h('small', null, 'せんせい（1びょう ながおし）'));
+    longPress(tcard, 1000, () => { sfx.tap(); renderSetup(); });
+    tcard.addEventListener('click', () => toast('せんせいは 1びょう ながおし して ください'));
+    const mv = k => { if (!p.roster.length) return; p.duty.idx = (p.duty.idx + k + p.roster.length) % p.roster.length; p.duty.date = todayStr(); persist(); sfx.tap(); renderHome(); };
+    setView('home', [
+      h('h1', { class: 'title' }, '🌻 ' + p.name, h('small', null, (d.getMonth() + 1) + 'がつ ' + d.getDate() + 'にち（' + WD[d.getDay()] + '）')),
+      du ? h('div', { class: 'duty' }, h('button', { type: 'button', class: 'arr', 'aria-label': 'まえの こ', onclick: () => mv(-1) }, '◀'), pic(du), h('div', null, h('small', null, 'きょうの にっちょく'), h('br'), h('b', null, san(du))), h('button', { type: 'button', class: 'arr', 'aria-label': 'つぎの こ', onclick: () => mv(1) }, '▶'))
+        : h('div', { class: 'note-box' }, 'はじめに せんせいが「じゅんび」で クラスの なまえを いれて ください。'),
+      h('div', { class: 'menu' },
+        h('button', { type: 'button', class: 'mcard', style: '--c:#F08C00' + (am ? '' : ';opacity:.75'), onclick: () => { if (tapOk()) startRun('am'); } }, E('☀️'), h('b', null, 'あさの かい'), h('small', null, p.done[todayStr() + 'am'] ? '✓ きょうは おわった' : p.am.filter(x => x.on).length + 'こ')),
+        h('button', { type: 'button', class: 'mcard', style: '--c:#5F3DC4' + (am ? ';opacity:.75' : ''), onclick: () => { if (tapOk()) startRun('pm'); } }, E('🌙'), h('b', null, 'かえりの かい'), h('small', null, p.done[todayStr() + 'pm'] ? '✓ きょうは おわった' : p.pm.filter(x => x.on).length + 'こ')),
+        tcard)
+    ]);
+  }
+
+  /* ============================================================
+     すすめる
+       R = { kind:'am'|'pm', list:[key], i, li（いまの セリフ）, st:{} }
+     ============================================================ */
+  let R = null;
+  function startRun(kind) {
+    const p = cur(); R = { kind, list: p[kind].filter(x => x.on).map(x => x.k), i: 0, li: 0, st: {} };
+    if (!R.list.length) { toast('すすめかたが ありません'); return; }
+    keepAwake(); sfx.tap(); renderRun();
+  }
+  const DUTY = 'にっちょく', ALL = 'みんな', TCH = 'せんせい';
+  // その こうもくの セリフと ぶひん
+  function itemOf(k) {
+    const p = cur(), d = now(), dk = todayStr(), wd = d.getDay(), am = R.kind === 'am';
+    const kai = am ? 'あさの かい' : 'かえりの かい';
+    if (k === 'hello' || k === 'hello2') return { lines: [[DUTY, 'これから ' + kai + 'を はじめます。'], [DUTY, 'きりつ。'], [DUTY, 'れい。'], [ALL, am ? 'おはよう ございます。' : 'おねがいします。'], [DUTY, 'ちゃくせき。']] };
+    if (k === 'bye') return { lines: [[DUTY, 'これで あさの かいを おわります。'], [DUTY, 'きりつ。れい。'], [ALL, 'ありがとう ございました。'], [DUTY, 'ちゃくせき。']] };
+    if (k === 'bye2') return { lines: [[DUTY, 'これで かえりの かいを おわります。'], [DUTY, 'きりつ。れい。'], [ALL, 'さようなら。']] };
+    if (k === 'teacher') return { lines: [[DUTY, 'せんせいの おはなし。せんせい、おねがいします。'], [TCH, '（せんせいの おはなし）']] };
+    if (k === 'date') {
+      const t = (d.getMonth() + 1) + 'がつ ' + d.getDate() + 'にち ' + WD[wd] + 'ようび';
+      return { lines: [[DUTY, 'きょうは なんがつ なんにち なんようび ですか？'], [ALL, t + ' です。']],
+        w: () => h('div', { class: 'datecard' }, h('div', { class: 'm' }, h('small', null, (d.getMonth() + 1) + 'がつ'), h('b', null, String(d.getDate())), h('small', null, 'にち')), h('div', { class: 'w', style: 'background:' + WDC[wd] }, WD[wd] + 'ようび')) };
+    }
+    if (k === 'weather') {
+      const wi = p.wx[dk];
+      return { lines: [[DUTY, 'きょうの てんきは なんですか？'], [ALL, (wi == null ? '〇〇' : WX[wi][1]) + ' です。']], need: 1, ok: () => p.wx[dk] != null, ng: 'てんきを えらんでね',
+        w: () => h('div', { class: 'wx' }, WX.map((x, i) => h('button', { type: 'button', class: wi === i ? 'on' : '', onclick: () => { p.wx[dk] = i; persist(); sfx.tap(); speak(x[1]); R.li = Math.max(R.li, 1); renderRun(true); } }, E(x[0]), x[1]))) };
+    }
+    if (k === 'health') return healthItem(p, dk);
+    if (k === 'sched' || k === 'tomorrow') {
+      const day = k === 'sched' ? d : nextSchoolDay(d), list = ttOf(p, day.getDay());
+      const head = k === 'sched' ? 'きょうの よていを いいます。' : 'あしたの よていを いいます。' + ((day.getDate() - d.getDate() + 31) % 31 > 1 ? '（' + WD[day.getDay()] + 'ようび）' : '');
+      const lines = [[DUTY, head]].concat(list.length ? list.map((c, i) => [DUTY, (i + 1) + 'ばんめは ' + c[1] + ' です。']) : [[DUTY, 'よていは せんせいに ききましょう。']]);
+      return { lines, w: () => h('div', { class: 'tt' }, list.map((c, i) => h('div', { class: 'c' + (R.li === i + 1 ? ' now' : '') }, h('small', null, (i + 1) + 'ばんめ'), E(c[0]), h('b', null, c[1])))) };
+    }
+    if (k === 'goal') {
+      const g = p.goal || GOALS[Math.floor(Date.now() / 864e5) % GOALS.length];
+      return { lines: [[DUTY, 'きょうの めあては 「' + g + '」 です。'], [DUTY, 'みんなで いいましょう。さん、はい。'], [ALL, g + '。']], w: () => h('div', { class: 'topic' }, '🎯 ' + g) };
+    }
+    if (k === 'speech') {
+      if (R.st.topic == null) R.st.topic = Math.floor(Math.random() * p.topics.length);
+      const du = dutyOf(p), tp = p.topics[R.st.topic % p.topics.length];
+      return { lines: [[DUTY, 'ひとこと スピーチを します。'], [DUTY, 'おだいは 「' + tp + '」 です。'], [DUTY, '（' + tp + 'を はなす）'], [ALL, '（はくしゅ）']],
+        w: () => h('div', { style: 'display:flex;flex-direction:column;align-items:center;gap:10px' }, h('div', { class: 'topic' }, '🎤 ' + tp),
+          h('div', { class: 'actions' }, h('button', { type: 'button', class: 'mid-btn', onclick: () => { R.st.topic = (R.st.topic + 1 + Math.floor(Math.random() * (p.topics.length - 1))) % p.topics.length; sfx.tap(); renderRun(true); } }, '🎲 べつの おだい'),
+            h('button', { type: 'button', class: 'mid-btn', onclick: e => clapFx(e.currentTarget) }, '👏 はくしゅ'))) };
+    }
+    if (k === 'reflect') {
+      const list = ttOf(p, wd), fav = p.fav[dk] || [];
+      return { lines: [[DUTY, 'きょうの ふりかえりを します。たのしかった ことは なんですか？'], [ALL, (fav.length ? fav.join('と ') : '〇〇') + 'が たのしかったです。']],
+        w: () => list.length ? h('div', { class: 'tt' }, list.map(c => h('button', { type: 'button', class: 'c' + (fav.indexOf(c[1]) >= 0 ? ' fav' : ''), onclick: () => { const f = p.fav[dk] = p.fav[dk] || []; const j = f.indexOf(c[1]); if (j >= 0) f.splice(j, 1); else f.push(c[1]); persist(); sfx.tap(); R.li = Math.max(R.li, 1); renderRun(true); } }, E(c[0]), h('b', null, c[1])))) : h('div', { class: 'note-box' }, 'じかんわりを いれると、えらんで こたえられます') };
+    }
+    return { lines: [[DUTY, ITEMS[k].n]] };
+  }
+  // けんこう かんさつ：1にんずつ なまえを よぶ
+  function healthItem(p, dk) {
+    const H = p.health[dk] = p.health[dk] || {};
+    const ros = p.roster;
+    if (!ros.length) return { lines: [[DUTY, 'けんこう かんさつを します。'], [TCH, '（クラスの なまえが ありません）']] };
+    if (R.st.hi == null) R.st.hi = 0;
+    const done = R.st.hi >= ros.length;
+    const sick = ros.filter(m => H[m.id] === 1 || H[m.id] === 2), off = ros.filter(m => H[m.id] === 3);
+    const sum = (off.length ? off.map(san).join('、') + 'は おやすみです。' : '') + (sick.length ? sick.map(san).join('、') + 'は ちょうしが わるいです。' : '') + (!off.length && !sick.length ? 'みんな げんきです。' : 'ほかの ひとは げんきです。');
+    const lines = [[DUTY, 'けんこう かんさつを します。なまえを よばれたら へんじを しましょう。']];
+    if (done) lines.push([DUTY, sum]);
+    return { lines, need: 1, ok: () => R.st.hi >= ros.length, ng: 'さいごの ひとまで よぼう', post: done ? null : () => speak(san(ros[R.st.hi])),
+      w: () => {
+        if (done) return h('div', { class: 'roster' }, ros.map(m => h('span', null, (H[m.id] != null ? HS[H[m.id]][0] : '・') + ' ' + m.name)));
+        const m = ros[R.st.hi];
+        const set = v => { H[m.id] = v; persist(); sfx.tap(); R.st.hi++; if (R.st.hi >= ros.length) R.li = 1; renderRun(true); };
+        return h('div', { class: 'call' }, pic(m), h('div', { class: 'nm' }, san(m)),
+          h('div', { class: 'hbtns' }, HS.map((x, i) => h('button', { type: 'button', style: '--hc:' + x[2], onclick: () => { if (tapOk(400)) set(i); } }, E(x[0]), x[1]))),
+          h('div', { class: 'roster' }, ros.map((x, i) => h('span', { class: i === R.st.hi ? 'now' : '' }, (H[x.id] != null ? HS[H[x.id]][0] : '・') + ' ' + x.name))),
+          R.st.hi > 0 ? h('button', { type: 'button', class: 'mid-btn', onclick: () => { R.st.hi--; renderRun(true); } }, '↩ ひとり もどる') : null);
+      } };
+  }
+  function clapFx(el) { for (let i = 0; i < 6; i++) setTimeout(() => tone(1800 + Math.random() * 600, 0, .05, 'square', .15), i * 110); FX.small(el, { variant: 4 }); }
+  function renderRun(quiet) {
+    screen = 'run';
+    const p = cur(), k = R.list[R.i], it = itemOf(k), du = dutyOf(p);
+    R.li = Math.min(R.li, it.lines.length - 1);
+    // セリフが おおい ときは、いまの まわり だけ みせる
+    const lo = it.lines.length > 4 ? Math.max(0, Math.min(R.li - 1, it.lines.length - 3)) : 0, hi = it.lines.length > 4 ? lo + 3 : it.lines.length;
+    const lineEls = it.lines.map((l, i) => i < lo || i >= hi ? null : h('div', { class: 'line' + (i === R.li ? ' now' : i < R.li ? ' past' : '') }, h('span', { class: 'who2' }, l[0]), h('span', null, l[1]))).filter(Boolean);
+    const sayNow = end => { const l = it.lines[R.li]; if (l && !/^（/.test(l[1])) speak(l[1], { end }); else if (end) end(); };
+    const first = R.i === 0 && R.li === 0;
+    const next = () => {
+      if (!tapOk(400)) return;
+      if (R.li < it.lines.length - 1) {
+        if (it.need === R.li + 1 && it.ok && !it.ok()) { toast(it.ng); sfx.ng(); return; }
+        R.li++; sfx.step(); renderRun(); return;
+      }
+      if (it.ok && !it.ok()) { toast(it.ng); sfx.ng(); return; }
+      if (R.i < R.list.length - 1) { R.i++; R.li = 0; R.st = {}; sfx.page(); renderRun(); } else finishRun();
+    };
+    const prev = () => {
+      if (!tapOk(400)) return;
+      if (R.li > 0) { R.li--; renderRun(); return; }
+      if (R.i > 0) { R.i--; R.st = {}; R.li = 99; renderRun(); }
+    };
+    const last = R.i === R.list.length - 1 && R.li >= it.lines.length - 1;
+    setView('run', [
+      h('div', { class: 'rhead' }, du ? h('div', { class: 'who' }, pic(du), 'にっちょく：' + du.name) : h('span'),
+        h('div', { class: 'ttl' }, ITEMS[k].e + ' ' + ITEMS[k].n), h('span', { style: 'font-size:14px;color:var(--sub)' }, (R.i + 1) + ' / ' + R.list.length)),
+      h('div', { class: 'steps' }, R.list.map((x, i) => h('i', { class: i === R.i ? 'on' : i < R.i ? 'done' : '' }, ITEMS[x].n))),
+      h('div', { class: 'body' }, it.w ? it.w() : null, h('div', { class: 'lines' }, lineEls)),
+      h('div', { class: 'rfoot' },
+        h('button', { type: 'button', class: 'navb prev', disabled: first, onclick: prev }, '◀ まえ'),
+        h('button', { type: 'button', class: 'say', 'aria-label': 'よみあげ', onclick: () => sayNow() }, '🔊'),
+        h('button', { type: 'button', class: 'navb', onclick: next }, last ? '✓ おわり' : 'つぎ ▶'))]);
+    const nowEl = $('.line.now'); if (nowEl && nowEl.scrollIntoView) nowEl.scrollIntoView({ block: 'nearest' });
+    const nc = $('.tt .c.now'); if (nc && nc.scrollIntoView) nc.scrollIntoView({ block: 'nearest', inline: 'center' });
+    if (!quiet && S().readAloud) after(250, () => sayNow(it.post ? () => after(300, it.post) : null));
+    else if (it.post) after(200, it.post);
+  }
+  function finishRun() {
+    const p = cur(); p.done[todayStr() + R.kind] = Date.now(); persist();
+    screen = 'end';
+    setView('center', [h('div', { class: 'center' }, h('div', { style: 'font-size:clamp(80px,16vh,150px)' }, R.kind === 'am' ? '🌞' : '🌙'),
+      h('h1', { class: 'title' }, (R.kind === 'am' ? 'あさの かい' : 'かえりの かい') + '、おしまい！', h('small', null, dutyOf(p) ? 'にっちょくの ' + san(dutyOf(p)) + '、ありがとう！' : 'よく できました')),
+      h('div', { class: 'actions' }, h('button', { type: 'button', class: 'big-btn go', onclick: () => { if (tapOk()) renderHome(); } }, '🏠 おわる')))]);
+    sfx.clear(); FX.big();
+    speak((R.kind === 'am' ? 'あさの かい' : 'かえりの かい') + '、おしまい。にっちょくさん、ありがとう');
+  }
+
+  /* ============================================================
+     じゅんび（せんせい）
+     ============================================================ */
+  let setupDay = 1;
+  function openLib(onPick, list) {
+    const m = $('#libModal'), PN = $('#libPanel'); PN.innerHTML = '';
+    const close = () => m.classList.remove('open');
+    PN.append(h('div', { class: 'panel-head' }, h('h2', null, '🖼️ えを えらぶ'), h('button', { type: 'button', class: 'btn', onclick: close }, 'とじる')),
+      list ? null : h('div', { class: 'btns' },
+        h('button', { type: 'button', class: 'btn primary', onclick: async () => { const fs = await pickFile('image/*', 'user'); if (!fs) return; const id = await savePhoto(fs[0], 400); close(); onPick({ media: id }); } }, '📷 カメラで とる'),
+        h('button', { type: 'button', class: 'btn primary', onclick: async () => { const fs = await pickFile('image/*'); if (!fs) return; const id = await savePhoto(fs[0], 400); close(); onPick({ media: id }); } }, '🖼️ しゃしんを えらぶ')),
+      h('div', { class: 'lib' }, (list || LIB).map(([g, l]) => [h('h4', null, g), l.map(([e, n]) => h('button', { type: 'button', onclick: () => { close(); onPick({ emoji: e, name: n }); } }, E(e), n))])));
+    m.classList.add('open'); m.scrollTop = 0;
+  }
+  $('#libModal').addEventListener('click', e => { if (e.target.id === 'libModal') $('#libModal').classList.remove('open'); });
+  function renderSetup() {
+    screen = 'setup';
+    const p = cur(), re = () => { persist(); renderSetup(); };
+    const roster = h('div', { class: 'sbox' }, h('h3', null, '👦 クラスの なかま（にっちょくの じゅん）'),
+      p.roster.map((m, i) => { const pc = pic(m); pc.title = 'え・しゃしん'; pc.addEventListener('click', () => openLib(r => { if (r.media) m.media = r.media; else { m.emoji = r.emoji; m.media = null; } re(); }));
+        return h('div', { class: 'srowx' }, h('b', { style: 'width:24px' }, String(i + 1)), pc, h('input', { type: 'text', value: m.name, oninput: e => { m.name = e.target.value; persistSoon(); } }),
+          h('button', { type: 'button', class: 'ibtn' + (p.duty.idx === i ? ' on' : ''), title: 'きょうの にっちょくに する', onclick: () => { p.duty.idx = i; p.duty.date = todayStr(); re(); } }, '⭐'),
+          h('button', { type: 'button', class: 'ibtn', onclick: () => { if (i > 0) { p.roster.splice(i - 1, 0, p.roster.splice(i, 1)[0]); re(); } } }, '▲'),
+          h('button', { type: 'button', class: 'ibtn', onclick: () => { if (i < p.roster.length - 1) { p.roster.splice(i + 1, 0, p.roster.splice(i, 1)[0]); re(); } } }, '▼'),
+          h('button', { type: 'button', class: 'ibtn warn', onclick: () => { if (confirm(m.name + ' を けしますか？')) { p.roster.splice(i, 1); re(); cleanMedia(); } } }, '🗑')); }),
+      h('div', { class: 'srowx' }, h('button', { type: 'button', class: 'mid-btn', onclick: () => { p.roster.push({ id: 'm' + uid(), name: 'なまえ' + (p.roster.length + 1), emoji: ICONS[p.roster.length % ICONS.length], media: null }); re(); } }, '＋ ひとり ふやす')),
+      h('p', { class: 'note' }, '⭐ が きょうの にっちょく。ひが かわると つぎの ひとに かわります。しゃしんは この たんまつだけに ほぞん します。'));
+    const day = setupDay, list = p.tt[day] = p.tt[day] || [];
+    const tt = h('div', { class: 'sbox' }, h('h3', null, '🗓️ じかんわり'),
+      h('div', { class: 'days' }, [1, 2, 3, 4, 5, 6].map(d => h('button', { type: 'button', class: d === day ? 'on' : '', onclick: () => { setupDay = d; renderSetup(); } }, WD[d]))),
+      h('div', { class: 'chipl' }, list.map((c, i) => h('span', { class: 'ch' }, (i + 1) + '. ' + c[0] + ' ' + c[1],
+        h('button', { type: 'button', 'aria-label': 'まえへ', onclick: () => { if (i > 0) { list.splice(i - 1, 0, list.splice(i, 1)[0]); re(); } } }, '◀'),
+        h('button', { type: 'button', 'aria-label': 'けす', onclick: () => { list.splice(i, 1); re(); } }, '✕'))),
+        h('button', { type: 'button', class: 'mid-btn', onclick: () => openLib(r => { list.push([r.emoji, r.name]); re(); }, [['べんきょう', SUBJ]]) }, '＋ ふやす'),
+        h('button', { type: 'button', class: 'mid-btn', onclick: () => { const n = prompt('なまえ（れい：はっぴょうかいの れんしゅう）'); if (n) { list.push(['⭐', n]); re(); } } }, '＋ じぶんで かく')),
+      day > 1 ? h('button', { type: 'button', class: 'mid-btn', style: 'align-self:flex-start', onclick: () => { p.tt[day] = (p.tt[day - 1] || []).map(x => x.slice()); re(); } }, '📋 ' + WD[day - 1] + 'ようびを コピー') : null);
+    const prog = kind => h('div', { class: 'sbox' }, h('h3', null, kind === 'am' ? '☀️ あさの かいの すすめかた' : '🌙 かえりの かいの すすめかた'),
+      h('div', { class: 'prog' }, p[kind].map((x, i) => h('div', { class: 'it' + (x.on ? '' : ' off') }, E(ITEMS[x.k].e), h('b', null, ITEMS[x.k].n),
+        h('button', { type: 'button', class: 'ibtn' + (x.on ? ' on' : ''), onclick: () => { x.on = !x.on; re(); } }, x.on ? '✓' : '－'),
+        h('button', { type: 'button', class: 'ibtn', onclick: () => { if (i > 0) { p[kind].splice(i - 1, 0, p[kind].splice(i, 1)[0]); re(); } } }, '▲'),
+        h('button', { type: 'button', class: 'ibtn', onclick: () => { if (i < p[kind].length - 1) { p[kind].splice(i + 1, 0, p[kind].splice(i, 1)[0]); re(); } } }, '▼')))));
+    const goal = h('div', { class: 'sbox' }, h('h3', null, '🎯 めあて・🎤 スピーチの おだい'),
+      h('div', { class: 'srowx' }, h('span', null, 'めあて'), h('input', { type: 'text', value: p.goal, placeholder: 'からっぽ なら ひごとに かわります（' + GOALS[0] + ' など）', oninput: e => { p.goal = e.target.value; persistSoon(); } })),
+      h('div', { class: 'chipl' }, p.topics.map((t, i) => h('span', { class: 'ch' }, t, h('button', { type: 'button', onclick: () => { if (p.topics.length > 1) { p.topics.splice(i, 1); re(); } } }, '✕'))),
+        h('button', { type: 'button', class: 'mid-btn', onclick: () => { const n = prompt('スピーチの おだい'); if (n) { p.topics.push(n); re(); } } }, '＋ おだい')));
+    setView('setup', [h('h1', { class: 'title' }, '🛠️ じゅんび（' + p.name + '）', h('small', null, 'クラスを ふやす・なまえを かえるのは ⚙️ から')),
+      roster, tt, prog('am'), prog('pm'), goal,
+      h('div', { class: 'actions' }, h('button', { type: 'button', class: 'big-btn go', onclick: () => { if (tapOk()) { persist(); cleanMedia(); renderHome(); } } }, '✓ できた'))]);
+  }
+
+  /* ============================================================
+     プリント
+       script … にっちょくの しんこう カード ／ tt … しゅうの じかんわり ／ health … けんこう かんさつ ひょう（1かげつ）
+     ============================================================ */
+  const PF = '<div class="pf">© MieeL　あさの かい ナビ　www.mieel-support-school.com</div>';
+  const HD = (t, s) => '<div class="phd"><h1>' + t + '</h1><small>' + (s || '') + '</small></div>';
+  function buildPages(type, o) {
+    o = o || {};
+    const p = store.profiles.find(x => x.id === o.pid) || cur();
+    if (type === 'script') {
+      const kind = o.kind === 'pm' ? 'pm' : 'am', keep = R;
+      R = { kind, list: [], i: 0, li: 0, st: { hi: 1e9, topic: 0 } };
+      let body = '', n = 0;
+      p[kind].filter(x => x.on).forEach(x => { const it = itemOf(x.k); body += '<div class="ph2">' + ITEMS[x.k].e + ' ' + ITEMS[x.k].n + '</div>' + it.lines.filter(l => l[0] !== TCH || x.k === 'teacher').map(l => { n++; return '<div class="pl">【' + l[0] + '】 ' + esc(l[1].replace(/〇〇/g, '＿＿＿')) + '</div>'; }).join(''); });
+      R = keep;
+      return ['<div class="ppage">' + HD((kind === 'am' ? '☀️ あさの かい' : '🌙 かえりの かい') + '（にっちょく）', esc(p.name)) + '<div class="pscript' + (n > 26 ? ' sm' : '') + '">' + body + '</div>' + PF + '</div>'];
+    }
+    if (type === 'tt') {
+      const days = o.sat === 'on' ? [1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5];
+      const rows = Math.max(5, ...days.map(d => ttOf(p, d).length));
+      const rh = Math.min(26, Math.floor(215 / rows));
+      let tr = '<tr><th class="no"></th>' + days.map(d => '<th style="color:' + WDC[d] + '">' + WD[d] + '</th>').join('') + '</tr>';
+      for (let r = 0; r < rows; r++) tr += '<tr><td class="no">' + (r + 1) + '</td>' + days.map(d => { const c = ttOf(p, d)[r]; return '<td style="height:' + rh + 'mm">' + (c ? '<span class="pe" style="font-size:' + Math.min(11, rh * .42) + 'mm">' + c[0] + '</span>' + esc(c[1]) : '') + '</td>'; }).join('') + '</tr>';
+      return ['<div class="ppage">' + HD('🗓️ じかんわり', esc(p.name)) + '<table class="ptt">' + tr + '</table>' + PF + '</div>'];
+    }
+    // けんこう かんさつ ひょう
+    const d0 = new Date(); if (o.m === 'prev') d0.setMonth(d0.getMonth() - 1, 1);
+    const y = d0.getFullYear(), mo = d0.getMonth(), days = [];
+    for (let dd = 1; dd <= 31; dd++) { const x = new Date(y, mo, dd); if (x.getMonth() !== mo) break; if (x.getDay() !== 0 && x.getDay() !== 6) days.push(x); }
+    const mark = ['○', '△', '×', 'や'];
+    const ros = p.roster.length ? p.roster : Array.from({ length: 8 }, () => ({ id: '', name: '' }));
+    const rowH = Math.min(12, Math.floor(200 / (ros.length + 1)));
+    let tr = '<tr><th class="n">なまえ</th>' + days.map(x => '<th style="color:' + WDC[x.getDay()] + '">' + x.getDate() + '<br>' + WD[x.getDay()] + '</th>').join('') + '</tr>';
+    ros.forEach(m => { tr += '<tr><td class="n" style="height:' + rowH + 'mm">' + esc(m.name) + '</td>' + days.map(x => { const H = p.health[ymd(x)]; return '<td>' + (H && H[m.id] != null ? mark[H[m.id]] : '') + '</td>'; }).join('') + '</tr>'; });
+    return ['<div class="ppage">' + HD('🩺 けんこう かんさつ', esc(p.name) + '　' + y + 'ねん ' + (mo + 1) + 'がつ<br>○げんき △すこし わるい ×わるい や おやすみ') + '<table class="phl">' + tr + '</table>' + PF + '</div>'];
+  }
+  window.MieelPrintAPI = {
+    version: 1, fixed: true,
+    app: { id: 'asanokai-navi', title: 'あさの かい ナビ', icon: '🌻' },
+    list() {
+      const cls = { key: 'pid', label: 'クラス', opts: store.profiles.map(p => [p.id, p.name]), def: cur().id };
+      return [
+        { id: 'script', name: 'にっちょくの しんこう カード', icon: '📜', params: [cls, { key: 'kind', label: 'かい', opts: [['am', 'あさの かい'], ['pm', 'かえりの かい']], def: 'am' }] },
+        { id: 'tt', name: 'じかんわり', icon: '🗓️', params: [cls, { key: 'sat', label: 'どようび', opts: [['off', 'なし'], ['on', 'あり']], def: 'off' }] },
+        { id: 'health', name: 'けんこう かんさつ ひょう', icon: '🩺', params: [cls, { key: 'm', label: 'つき', opts: [['this', 'こんげつ'], ['prev', 'せんげつ']], def: 'this' }] }
+      ];
+    },
+    build(id, params) { return Promise.resolve({ pages: buildPages(id, params), css: document.querySelector('style').textContent }); }
+  };
+
+  /* ============================================================
+     先生用せってい
+     ============================================================ */
+  APP.renderSettings = function (add, st, vp, pidSel) {
+    add(h('h3', null, '🔊 すすめかた'),
+      chk('ひかって いる セリフを じどうで よみあげる', 'readAloud', 'ことばが でにくい にっちょくの とき。オフでも 🔊 で よめます'),
+      h('div', { class: 'btns' }, h('button', { type: 'button', class: 'btn primary', onclick: () => { closeSettings(); renderSetup(); } }, '🛠️ じゅんび（なかま・じかんわり）を ひらく')));
+    add(h('h3', null, '🩺 けんこう かんさつの きろく'), pidSel());
+    const keys = Object.keys(vp.health).sort().reverse().slice(0, 10);
+    add(keys.length ? h('table', { class: 'rec-table' }, h('tr', null, ['日付', 'げんき', 'すこし', 'わるい', 'やすみ'].map(x => h('th', null, x))),
+      keys.map(k => { const v = Object.values(vp.health[k]); return h('tr', null, h('td', null, k.slice(5).replace('-', '/')), [0, 1, 2, 3].map(i => h('td', null, String(v.filter(x => x === i).length)))); })) : h('p', { class: 'note' }, 'まだ きろくが ありません。'),
+      h('p', { class: 'note' }, '1かげつぶんの ひょうは 🖨️ プリントの「けんこう かんさつ ひょう」で。'));
+  };
+  if (TEST) window.__an = { store: () => store, startRun, R: () => R, persist, renderSetup, renderHome };
+  startApp();
+  cleanMedia();
+
+})();
+</script>
+</body>
+</html>
