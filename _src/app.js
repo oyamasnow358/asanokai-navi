@@ -12,23 +12,41 @@
   const ITEMS = {
     hello: { e: '🙇', n: 'はじめの あいさつ' }, date: { e: '📅', n: 'ひづけ' }, weather: { e: '🌤️', n: 'てんき' }, health: { e: '🩺', n: 'けんこう かんさつ' },
     sched: { e: '🗓️', n: 'きょうの よてい' }, goal: { e: '🎯', n: 'きょうの めあて' }, speech: { e: '🎤', n: 'ひとこと スピーチ' }, teacher: { e: '🧑‍🏫', n: 'せんせいの おはなし' }, bye: { e: '👋', n: 'おわりの あいさつ' },
-    hello2: { e: '🙇', n: 'はじめの あいさつ' }, reflect: { e: '💖', n: 'きょうの ふりかえり' }, tomorrow: { e: '🗓️', n: 'あしたの よてい' }, bye2: { e: '👋', n: 'さようなら' }
+    hello2: { e: '🙇', n: 'はじめの あいさつ' }, reflect: { e: '💖', n: 'きょうの ふりかえり' }, tomorrow: { e: '🗓️', n: 'あしたの よてい' }, bye2: { e: '👋', n: 'さようなら' },
+    nanohi: { e: '🎌', n: 'きょうは なんの ひ' }, birthday: { e: '🎂', n: 'おたんじょうび' }, kondate: { e: '🍽️', n: 'きゅうしょくの こんだて' }, kakari: { e: '🧹', n: 'かかりの しごと' }, song: { e: '🎵', n: 'こんげつの うた' }, kakari2: { e: '✅', n: 'かかりの ほうこく' }
   };
-  const DEF_AM = ['hello', 'date', 'weather', 'health', 'sched', 'goal', 'speech', 'teacher', 'bye'], DEF_PM = ['hello2', 'reflect', 'tomorrow', 'teacher', 'bye2'];
+  // きょうは なんの ひ（きまった ひ）
+  const DAYS = { '01-01': ['がんじつ', 'あたらしい 1ねんの はじまりの ひです。'], '01-07': ['ななくさ', 'ななくさがゆを たべて、げんきを ねがう ひです。'], '02-03': ['せつぶん', 'まめまきを して、おにを おいはらう ひです。'], '02-11': ['けんこく きねんの ひ', 'くにの はじまりを おいわいする やすみの ひです。'], '02-14': ['バレンタインデー', 'だいすきな ひとに きもちを つたえる ひです。'], '02-22': ['ねこの ひ', '「ニャン ニャン ニャン」で ねこの ひです。'], '02-23': ['てんのう たんじょうび', 'てんのうへいかの たんじょうびです。'], '03-03': ['ひなまつり', 'おんなのこの せいちょうを いわう ひです。'], '03-14': ['ホワイトデー', 'バレンタインの おかえしを する ひです。'], '03-20': ['しゅんぶんの ひ', 'ひると よるの ながさが おなじに なる ころです。'], '04-01': ['エイプリルフール', 'ちいさな じょうだんを いって たのしむ ひです。'], '04-23': ['せかい ほんの ひ', 'ほんを よむ ことを たのしむ ひです。'], '04-29': ['しょうわの ひ', 'むかしの にほんを ふりかえる やすみの ひです。'], '05-03': ['けんぽう きねんび', 'にほんの きまりの もとが できた ひです。'], '05-04': ['みどりの ひ', 'しぜんに したしむ ひです。'], '05-05': ['こどもの ひ', 'こどもの せいちょうを いわう ひです。こいのぼりを かざります。'], '06-04': ['むしば よぼう デー', 'はを たいせつに する ひです。'], '06-10': ['ときの きねんび', 'じかんを たいせつに する ひです。'], '07-07': ['たなばた', 'たんざくに ねがいごとを かく ひです。'], '08-11': ['やまの ひ', 'やまに したしむ やすみの ひです。'], '09-01': ['ぼうさいの ひ', 'じしんや かじに そなえる ひです。'], '09-09': ['きゅうきゅうの ひ', 'きゅうきゅうしゃや てあての ことを かんがえる ひです。'], '09-23': ['しゅうぶんの ひ', 'ひると よるの ながさが おなじに なる ころです。'], '10-10': ['めの あいご デー', 'めを たいせつに する ひです。'], '10-14': ['てつどうの ひ', 'にほんで はじめて きしゃが はしった ひです。'], '10-31': ['ハロウィン', 'かそうを して たのしむ ひです。'], '11-03': ['ぶんかの ひ', 'ぶんかを たいせつに する やすみの ひです。'], '11-09': ['119ばんの ひ', 'かじや きゅうきゅうの でんわ ばんごうの ひです。'], '11-15': ['しちごさん', '3さい・5さい・7さいの せいちょうを いわう ひです。'], '11-23': ['きんろう かんしゃの ひ', 'はたらく ひとに「ありがとう」を つたえる ひです。'], '12-22': ['とうじ', '1ねんで いちばん ひるが みじかい ころです。ゆずゆに はいります。'], '12-25': ['クリスマス', 'サンタクロースが くる と いわれる ひです。'], '12-31': ['おおみそか', '1ねんの さいごの ひです。'] };
+  const SEASON = ['ふゆ。さむい ので てぶくろや マフラーで あたたかく しましょう。', 'ふゆ。かぜに きを つけましょう。', 'はるが ちかづいて きました。', 'はる。さくらが さく きせつです。', 'はる。みどりが きれいな きせつです。', 'つゆ。あめの ひが おおい きせつです。', 'なつ。みずを たくさん のみましょう。', 'なつやすみの きせつです。', 'あき。すずしく なって きました。', 'あき。スポーツや どくしょの きせつです。', 'あき。きの はが あかや きいろに なります。', 'ふゆ。1ねんの さいごの つきです。'];
+  // なんかいめの げつようび（せいじんの ひ・うみの ひ など）
+  function nthMonday(y, m, n) { const d = new Date(y, m, 1); const off = (8 - d.getDay()) % 7; return 1 + off + (n - 1) * 7; }
+  function dayOf(d) {
+    const y = d.getFullYear(), m = d.getMonth(), dd = d.getDate(), key = String(m + 1).padStart(2, '0') + '-' + String(dd).padStart(2, '0');
+    if (m === 0 && dd === nthMonday(y, 0, 2)) return ['せいじんの ひ', 'おとなに なった ひとを いわう ひです。'];
+    if (m === 6 && dd === nthMonday(y, 6, 3)) return ['うみの ひ', 'うみに かんしゃ する ひです。'];
+    if (m === 8 && dd === nthMonday(y, 8, 3)) return ['けいろうの ひ', 'おじいさん・おばあさんを たいせつに する ひです。'];
+    if (m === 9 && dd === nthMonday(y, 9, 2)) return ['スポーツの ひ', 'からだを うごかす ことを たのしむ ひです。'];
+    return DAYS[key] || null;
+  }
+  const KAKARI = [['💡', 'でんき'], ['🪟', 'まど'], ['🧽', 'こくばん'], ['🌷', 'はなの みずやり'], ['📄', 'くばりもの'], ['🐟', 'いきもの'], ['📅', 'カレンダー'], ['🧺', 'せいとん']];
+  const DEF_AM = ['hello', 'date', 'nanohi', 'weather', 'health', 'birthday', 'sched', 'kondate', 'goal', 'kakari', 'speech', 'song', 'teacher', 'bye'], DEF_PM = ['hello2', 'reflect', 'kakari2', 'tomorrow', 'teacher', 'bye2'];
+  const DEF_OFF = ['kondate', 'kakari', 'song', 'kakari2'];
   const LIB = [['ひと', [['🐰', 'うさぎ'], ['🐻', 'くま'], ['🐼', 'パンダ'], ['🐱', 'ねこ'], ['🐶', 'いぬ'], ['🦊', 'きつね'], ['🐸', 'かえる'], ['🐧', 'ペンギン'], ['🐯', 'とら'], ['🐨', 'コアラ'], ['🐵', 'さる'], ['🦁', 'ライオン'], ['🐹', 'ハムスター'], ['🐮', 'うし'], ['🐷', 'ぶた'], ['🐤', 'ひよこ'], ['🦄', 'ユニコーン'], ['🐳', 'くじら'], ['🦖', 'きょうりゅう'], ['🚀', 'ロケット']]],
     ['べんきょう', SUBJ]];
   const APP = {
     id: 'asanokai-navi', title: 'あさの かい ナビ', ls: 'asanokai.v1', db: 'mieel-asanokai', sw: true, color: '#F08C00',
     profHead: '🏫 クラス', profWord: 'クラス', whoTitle: 'どの クラス？',
     defaults: { readAloud: true, callMode: 'call' },
-    newProfile: (name, icon) => ({ id: 'p' + Math.random().toString(36).slice(2, 9), name: name === 'みんな' ? 'わたしの クラス' : name, icon, roster: [], tt: {}, am: DEF_AM.map(k => ({ k, on: true })), pm: DEF_PM.map(k => ({ k, on: true })), duty: { idx: 0, date: '' }, goal: '', topics: TOPICS.slice(), health: {}, wx: {}, fav: {}, done: {} }),
+    newProfile: (name, icon) => ({ id: 'p' + Math.random().toString(36).slice(2, 9), name: name === 'みんな' ? 'わたしの クラス' : name, icon, roster: [], tt: {}, am: DEF_AM.map(k => ({ k, on: DEF_OFF.indexOf(k) < 0 })), pm: DEF_PM.map(k => ({ k, on: DEF_OFF.indexOf(k) < 0 })), duty: { idx: 0, date: '' }, goal: '', topics: TOPICS.slice(), health: {}, wx: {}, fav: {}, done: {}, kakari: KAKARI.map(k => ({ e: k[0], n: k[1], who: [] })), menu: {}, song: '' }),
     normProfile(p) {
       p.roster = Array.isArray(p.roster) ? p.roster : []; p.tt = p.tt && typeof p.tt === 'object' ? p.tt : {};
-      const fix = (a, d) => { a = Array.isArray(a) ? a.filter(x => ITEMS[x.k]) : []; d.forEach(k => { if (!a.some(x => x.k === k)) a.push({ k, on: false }); }); return a; };
+      // あたらしい こうもくは、きまった じゅんばんの ところに いれる
+      const fix = (a, d) => { a = Array.isArray(a) ? a.filter(x => ITEMS[x.k]) : []; d.forEach((k, di) => { if (a.some(x => x.k === k)) return; const prev = d.slice(0, di).reverse().find(q => a.some(x => x.k === q)); const at = prev ? a.findIndex(x => x.k === prev) + 1 : 0; a.splice(at, 0, { k, on: DEF_OFF.indexOf(k) < 0 }); }); return a; };
       p.am = fix(p.am, DEF_AM); p.pm = fix(p.pm, DEF_PM);
       if (!p.am.some(x => x.on)) p.am.forEach(x => { x.on = true; }); if (!p.pm.some(x => x.on)) p.pm.forEach(x => { x.on = true; });
       p.duty = p.duty || { idx: 0, date: '' }; p.goal = p.goal || ''; p.topics = Array.isArray(p.topics) && p.topics.length ? p.topics : TOPICS.slice();
-      ['health', 'wx', 'fav', 'done'].forEach(k => { p[k] = p[k] && typeof p[k] === 'object' ? p[k] : {}; });
+      ['health', 'wx', 'fav', 'done', 'menu'].forEach(k => { p[k] = p[k] && typeof p[k] === 'object' ? p[k] : {}; });
+      if (!Array.isArray(p.kakari)) p.kakari = KAKARI.map(k => ({ e: k[0], n: k[1], who: [] })); p.song = p.song || '';
     },
     childScreens: ['run'], topScreens: ['home', 'setup'],
     renderHome: () => renderHome(),
@@ -84,11 +102,13 @@
      ============================================================ */
   let R = null;
   function startRun(kind) {
-    const p = cur(); R = { kind, list: p[kind].filter(x => x.on).map(x => x.k), i: 0, li: 0, st: {} };
+    const p = cur(); R = { kind, list: p[kind].filter(x => x.on).map(x => x.k).filter(k => k !== 'birthday' || bdToday(p).length), i: 0, li: 0, st: {} };
     if (!R.list.length) { toast('すすめかたが ありません'); return; }
     keepAwake(); sfx.tap(); renderRun();
   }
   const DUTY = 'にっちょく', ALL = 'みんな', TCH = 'せんせい';
+  const md = d => (d.getMonth() + 1) + '/' + d.getDate();
+  const bdToday = p => p.roster.filter(m => m.bd && m.bd.replace(/^0/, '').replace('/0', '/') === md(new Date()));
   // その こうもくの セリフと ぶひん
   function itemOf(k) {
     const p = cur(), d = now(), dk = todayStr(), wd = d.getDay(), am = R.kind === 'am';
@@ -113,6 +133,30 @@
       const head = k === 'sched' ? 'きょうの よていを いいます。' : 'あしたの よていを いいます。' + ((day.getDate() - d.getDate() + 31) % 31 > 1 ? '（' + WD[day.getDay()] + 'ようび）' : '');
       const lines = [[DUTY, head]].concat(list.length ? list.map((c, i) => [DUTY, (i + 1) + 'ばんめは ' + c[1] + ' です。']) : [[DUTY, 'よていは せんせいに ききましょう。']]);
       return { lines, w: () => h('div', { class: 'tt' }, list.map((c, i) => h('div', { class: 'c' + (R.li === i + 1 ? ' now' : '') }, h('small', null, (i + 1) + 'ばんめ'), E(c[0]), h('b', null, c[1])))) };
+    }
+    if (k === 'nanohi') {
+      const dd = dayOf(d);
+      if (dd) return { lines: [[DUTY, 'きょうは なんの ひ でしょう？'], [DUTY, 'きょうは「' + dd[0] + '」です。'], [DUTY, dd[1]]], w: () => h('div', { class: 'topic' }, '🎌 ' + dd[0]) };
+      return { lines: [[DUTY, 'いまの きせつの おはなし です。'], [DUTY, (d.getMonth() + 1) + 'がつは ' + SEASON[d.getMonth()]]], w: () => h('div', { class: 'topic' }, ['⛄', '⛄', '🌱', '🌸', '🌿', '☔', '🌻', '🍉', '🍂', '🏃', '🍁', '🎄'][d.getMonth()] + ' ' + (d.getMonth() + 1) + 'がつ') };
+    }
+    if (k === 'birthday') {
+      const bs = bdToday(p), nm = bs.map(san).join('と ');
+      return { lines: [[DUTY, 'きょうは ' + nm + 'の おたんじょうびです。'], [DUTY, 'みんなで おいわい しましょう。さん、はい。'], [ALL, 'おたんじょうび おめでとう！']],
+        w: () => h('div', { class: 'call' }, h('div', { style: 'display:flex;gap:10px;justify-content:center' }, bs.map(m => pic(m))), h('div', { class: 'nm' }, '🎂 ' + nm), h('button', { type: 'button', class: 'mid-btn', onclick: e => { clapFx(e.currentTarget); FX.big(); } }, '🎉 おいわい')) };
+    }
+    if (k === 'kondate') {
+      const mn = p.menu[dk] || '';
+      return { lines: [[DUTY, 'きょうの きゅうしょくの こんだてを いいます。'], [DUTY, mn ? mn + ' です。' : 'こんだては、せんせいに ききましょう。']],
+        w: () => h('div', { style: 'display:flex;flex-direction:column;align-items:center;gap:8px' }, h('div', { class: 'topic' }, '🍽️ ' + (mn || '？')), h('button', { type: 'button', class: 'mid-btn', onclick: () => { const v = prompt('きょうの こんだて（れい：ごはん・カレー・サラダ・ぎゅうにゅう）', mn); if (v !== null) { p.menu[dk] = v.trim(); persist(); renderRun(true); } } }, '✏️ こんだてを いれる（せんせい）')) };
+    }
+    if (k === 'kakari' || k === 'kakari2') {
+      const ks = p.kakari.filter(x => x.who.length), whoN = x => x.who.map(id => p.roster.find(m => m.id === id)).filter(Boolean).map(san).join('と ');
+      const lines = [[DUTY, k === 'kakari' ? 'かかりの しごとを たしかめます。' : 'かかりの しごとの ほうこくを します。']].concat(ks.length ? ks.map(x => k === 'kakari' ? [DUTY, x.n + 'かかりは ' + whoN(x) + 'です。'] : [ALL, x.n + 'かかり、おわりました。']) : [[TCH, '（かかりは「じゅんび」で きめられます）']]);
+      return { lines, w: () => h('div', { class: 'tt' }, ks.map((x, i) => h('div', { class: 'c' + (R.li === i + 1 ? ' now' : '') }, E(x.e), h('b', null, x.n), h('small', null, x.who.map(id => (p.roster.find(m => m.id === id) || {}).name).filter(Boolean).join('・'))))) };
+    }
+    if (k === 'song') {
+      const sg = p.song || '';
+      return { lines: [[DUTY, 'こんげつの うたを うたいます。' + (sg ? '「' + sg + '」です。' : '')], [DUTY, 'さん、はい。'], [ALL, '（うたう）']], w: () => h('div', { class: 'topic' }, '🎵 ' + (sg || 'こんげつの うた')) };
     }
     if (k === 'goal') {
       const g = p.goal || GOALS[Math.floor(Date.now() / 864e5) % GOALS.length];
@@ -225,6 +269,7 @@
     const roster = h('div', { class: 'sbox' }, h('h3', null, '👦 クラスの なかま（にっちょくの じゅん）'),
       p.roster.map((m, i) => { const pc = pic(m); pc.title = 'え・しゃしん'; pc.addEventListener('click', () => openLib(r => { if (r.media) m.media = r.media; else { m.emoji = r.emoji; m.media = null; } re(); }));
         return h('div', { class: 'srowx' }, h('b', { style: 'width:24px' }, String(i + 1)), pc, h('input', { type: 'text', value: m.name, oninput: e => { m.name = e.target.value; persistSoon(); } }),
+          h('input', { type: 'text', class: 'bd', value: m.bd || '', placeholder: '🎂 4/12', title: 'たんじょうび（つき/ひ）', inputmode: 'numeric', oninput: e => { m.bd = e.target.value.replace(/[^0-9/]/g, ''); persistSoon(); } }),
           h('button', { type: 'button', class: 'ibtn' + (p.duty.idx === i ? ' on' : ''), title: 'きょうの にっちょくに する', onclick: () => { p.duty.idx = i; p.duty.date = todayStr(); re(); } }, '⭐'),
           h('button', { type: 'button', class: 'ibtn', onclick: () => { if (i > 0) { p.roster.splice(i - 1, 0, p.roster.splice(i, 1)[0]); re(); } } }, '▲'),
           h('button', { type: 'button', class: 'ibtn', onclick: () => { if (i < p.roster.length - 1) { p.roster.splice(i + 1, 0, p.roster.splice(i, 1)[0]); re(); } } }, '▼'),
@@ -245,12 +290,18 @@
         h('button', { type: 'button', class: 'ibtn' + (x.on ? ' on' : ''), onclick: () => { x.on = !x.on; re(); } }, x.on ? '✓' : '－'),
         h('button', { type: 'button', class: 'ibtn', onclick: () => { if (i > 0) { p[kind].splice(i - 1, 0, p[kind].splice(i, 1)[0]); re(); } } }, '▲'),
         h('button', { type: 'button', class: 'ibtn', onclick: () => { if (i < p[kind].length - 1) { p[kind].splice(i + 1, 0, p[kind].splice(i, 1)[0]); re(); } } }, '▼')))));
+    const kak = h('div', { class: 'sbox' }, h('h3', null, '🧹 かかり（なまえを タッチして きめる）'),
+      p.kakari.map((x, i) => h('div', { class: 'srowx' }, E(x.e), h('input', { type: 'text', value: x.n, style: 'flex:0 1 160px', oninput: e => { x.n = e.target.value; persistSoon(); } }),
+        h('div', { class: 'chipl', style: 'flex:1' }, p.roster.map(m => h('button', { type: 'button', class: 'mini-btn' + (x.who.indexOf(m.id) >= 0 ? ' on' : ''), style: x.who.indexOf(m.id) >= 0 ? 'background:var(--accent);color:#fff;border-color:var(--accent)' : '', onclick: () => { const j = x.who.indexOf(m.id); if (j >= 0) x.who.splice(j, 1); else x.who.push(m.id); re(); } }, m.name))),
+        h('button', { type: 'button', class: 'ibtn warn', onclick: () => { p.kakari.splice(i, 1); re(); } }, '🗑'))),
+      h('div', { class: 'srowx' }, h('button', { type: 'button', class: 'mid-btn', onclick: () => { p.kakari.push({ e: '⭐', n: 'あたらしい かかり', who: [] }); re(); } }, '＋ かかりを ふやす'),
+        h('span', null, '🎵 こんげつの うた'), h('input', { type: 'text', value: p.song, placeholder: 'れい：ともだち 100にん できるかな', oninput: e => { p.song = e.target.value; persistSoon(); } })));
     const goal = h('div', { class: 'sbox' }, h('h3', null, '🎯 めあて・🎤 スピーチの おだい'),
       h('div', { class: 'srowx' }, h('span', null, 'めあて'), h('input', { type: 'text', value: p.goal, placeholder: 'からっぽ なら ひごとに かわります（' + GOALS[0] + ' など）', oninput: e => { p.goal = e.target.value; persistSoon(); } })),
       h('div', { class: 'chipl' }, p.topics.map((t, i) => h('span', { class: 'ch' }, t, h('button', { type: 'button', onclick: () => { if (p.topics.length > 1) { p.topics.splice(i, 1); re(); } } }, '✕'))),
         h('button', { type: 'button', class: 'mid-btn', onclick: () => { const n = prompt('スピーチの おだい'); if (n) { p.topics.push(n); re(); } } }, '＋ おだい')));
     setView('setup', [h('h1', { class: 'title' }, '🛠️ じゅんび（' + p.name + '）', h('small', null, 'クラスを ふやす・なまえを かえるのは ⚙️ から')),
-      roster, tt, prog('am'), prog('pm'), goal,
+      roster, tt, prog('am'), prog('pm'), kak, goal,
       h('div', { class: 'actions' }, h('button', { type: 'button', class: 'big-btn go', onclick: () => { if (tapOk()) { persist(); cleanMedia(); renderHome(); } } }, '✓ できた'))]);
   }
 
@@ -267,7 +318,7 @@
       const kind = o.kind === 'pm' ? 'pm' : 'am', keep = R;
       R = { kind, list: [], i: 0, li: 0, st: { hi: 1e9, topic: 0 } };
       let body = '', n = 0;
-      p[kind].filter(x => x.on).forEach(x => { const it = itemOf(x.k); body += '<div class="ph2">' + ITEMS[x.k].e + ' ' + ITEMS[x.k].n + '</div>' + it.lines.filter(l => l[0] !== TCH || x.k === 'teacher').map(l => { n++; return '<div class="pl">【' + l[0] + '】 ' + esc(l[1].replace(/〇〇/g, '＿＿＿')) + '</div>'; }).join(''); });
+      p[kind].filter(x => x.on && (x.k !== 'birthday' || bdToday(p).length)).forEach(x => { const it = itemOf(x.k); body += '<div class="ph2">' + ITEMS[x.k].e + ' ' + ITEMS[x.k].n + '</div>' + it.lines.filter(l => l[0] !== TCH || x.k === 'teacher').map(l => { n++; return '<div class="pl">【' + l[0] + '】 ' + esc(l[1].replace(/〇〇/g, '＿＿＿')) + '</div>'; }).join(''); });
       R = keep;
       return ['<div class="ppage">' + HD((kind === 'am' ? '☀️ あさの かい' : '🌙 かえりの かい') + '（にっちょく）', esc(p.name)) + '<div class="pscript' + (n > 26 ? ' sm' : '') + '">' + body + '</div>' + PF + '</div>'];
     }

@@ -68,6 +68,7 @@
   .sbox h3 { margin: 0; font-size: 20px; }
   .srowx { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   .srowx input[type=text] { font: inherit; font-size: 17px; padding: 6px 10px; border-radius: 10px; border: 2px solid var(--line); flex: 1; min-width: 140px; }
+  .srowx input.bd { flex: 0 0 90px; min-width: 0; }
   .srowx .pic { width: 44px; height: 44px; border-radius: 50%; --es: 26px; background: #FFF3BF; cursor: pointer; flex: none; }
   .ibtn { width: 40px; height: 40px; border-radius: 10px; border: none; background: #F1F3F5; font-size: 17px; flex: none; }
   .ibtn.warn { background: #FFF0F0; color: #C92A2A; }
