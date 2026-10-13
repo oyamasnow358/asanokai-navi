@@ -1151,7 +1151,7 @@ const FX = (function () {
       let body = '', n = 0;
       p[kind].filter(x => x.on && (x.k !== 'birthday' || bdToday(p).length)).forEach(x => { const it = itemOf(x.k); body += '<div class="ph2">' + ITEMS[x.k].e + ' ' + ITEMS[x.k].n + '</div>' + it.lines.filter(l => l[0] !== TCH || x.k === 'teacher').map(l => { n++; return '<div class="pl">【' + l[0] + '】 ' + esc(l[1].replace(/〇〇/g, '＿＿＿')) + '</div>'; }).join(''); });
       R = keep;
-      return ['<div class="ppage">' + HD((kind === 'am' ? '☀️ あさの かい' : '🌙 かえりの かい') + '（にっちょく）', esc(p.name)) + '<div class="pscript' + (n > 26 ? ' sm' : '') + '">' + body + '</div>' + PF + '</div>'];
+      return ['<div class="ppage">' + HD((kind === 'am' ? '☀️ あさの かい' : '🌙 かえりの かい') + '（にっちょく）', esc(p.name)) + '<div class="pscript' + (n > 20 || body.length > 2600 ? ' sm' : '') + '">' + body + '</div>' + PF + '</div>'];
     }
     if (type === 'tt') {
       const days = o.sat === 'on' ? [1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5];
