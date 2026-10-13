@@ -45,7 +45,7 @@
       p.am = fix(p.am, DEF_AM); p.pm = fix(p.pm, DEF_PM);
       if (!p.am.some(x => x.on)) p.am.forEach(x => { x.on = true; }); if (!p.pm.some(x => x.on)) p.pm.forEach(x => { x.on = true; });
       p.duty = p.duty || { idx: 0, date: '' }; p.goal = p.goal || ''; p.topics = Array.isArray(p.topics) && p.topics.length ? p.topics : TOPICS.slice();
-      ['health', 'wx', 'fav', 'done', 'menu'].forEach(k => { p[k] = p[k] && typeof p[k] === 'object' ? p[k] : {}; });
+      ['health', 'wx', 'fav', 'done', 'menu', 'photos'].forEach(k => { p[k] = p[k] && typeof p[k] === 'object' ? p[k] : {}; });
       if (!Array.isArray(p.kakari)) p.kakari = KAKARI.map(k => ({ e: k[0], n: k[1], who: [] })); p.song = p.song || '';
     },
     childScreens: ['run'], topScreens: ['home', 'setup'],
@@ -72,7 +72,7 @@
   }
   const dutyOf = p => p.roster.length ? p.roster[p.duty.idx % p.roster.length] : null;
   const san = m => m.name + (/(さん|くん|ちゃん|せんせい)$/.test(m.name) ? '' : 'さん');
-  async function cleanMedia() { const used = new Set(); store.profiles.forEach(p => p.roster.forEach(m => { if (m.media) used.add(m.media); })); try { for (const m of await DB.all()) if (!used.has(m.id) && Date.now() - m.at > 60000) await DB.del(m.id); } catch (e) { /* 無視 */ } }
+  async function cleanMedia() { const used = new Set(); store.profiles.forEach(p => { p.roster.forEach(m => { if (m.media) used.add(m.media); }); Object.values(p.photos || {}).forEach(v => used.add(v)); }); try { for (const m of await DB.all()) if (!used.has(m.id) && Date.now() - m.at > 60000) await DB.del(m.id); } catch (e) { /* 無視 */ } }
 
   /* ============================================================
      ホーム
@@ -199,6 +199,14 @@
           R.st.hi > 0 ? h('button', { type: 'button', class: 'mid-btn', onclick: () => { R.st.hi--; renderRun(true); } }, '↩ ひとり もどる') : null);
       } };
   }
+  // しゃしん：'am:hello:0'（セリフごと） → 'am:hello'（こうもく ぜんたい）の じゅんに さがす
+  function photoOf(p, kind, k, li) {
+    const id = (p.photos || {})[kind + ':' + k + ':' + li] || (p.photos || {})[kind + ':' + k];
+    if (!id) return null;
+    const box = h('div', { class: 'rphoto' }, h('img', { alt: '' }));
+    mediaURL(id).then(u => { const im = box.querySelector('img'); if (u && im) im.src = u; else box.remove(); });
+    return box;
+  }
   function clapFx(el) { for (let i = 0; i < 6; i++) setTimeout(() => tone(1800 + Math.random() * 600, 0, .05, 'square', .15), i * 110); FX.small(el, { variant: 4 }); }
   function renderRun(quiet) {
     screen = 'run';
@@ -228,7 +236,7 @@
       h('div', { class: 'rhead' }, du ? h('div', { class: 'who' }, pic(du), 'にっちょく：' + du.name) : h('span'),
         h('div', { class: 'ttl' }, ITEMS[k].e + ' ' + ITEMS[k].n), h('span', { style: 'font-size:14px;color:var(--sub)' }, (R.i + 1) + ' / ' + R.list.length)),
       h('div', { class: 'steps' }, R.list.map((x, i) => h('i', { class: i === R.i ? 'on' : i < R.i ? 'done' : '' }, ITEMS[x].n))),
-      h('div', { class: 'body' }, it.w ? it.w() : null, h('div', { class: 'lines' }, lineEls)),
+      h('div', { class: 'body' }, photoOf(p, R.kind, k, R.li), it.w ? it.w() : null, h('div', { class: 'lines' }, lineEls)),
       h('div', { class: 'rfoot' },
         h('button', { type: 'button', class: 'navb prev', disabled: first, onclick: prev }, '◀ まえ'),
         h('button', { type: 'button', class: 'say', 'aria-label': 'よみあげ', onclick: () => sayNow() }, '🔊'),
@@ -263,6 +271,27 @@
     m.classList.add('open'); m.scrollTop = 0;
   }
   $('#libModal').addEventListener('click', e => { if (e.target.id === 'libModal') $('#libModal').classList.remove('open'); });
+  // こうもくの しゃしんを きめる（セリフごと・こうもく ぜんたい）
+  function photoEditor(kind, k) {
+    const p = cur(), m = $('#libModal'), PN = $('#libPanel'); PN.innerHTML = '';
+    const keep = R; R = { kind, list: [], i: 0, li: 0, st: { hi: 1e9, topic: 0 } };
+    let lines = []; try { lines = itemOf(k).lines; } catch (e) { lines = []; } R = keep;
+    const close = () => { m.classList.remove('open'); renderSetup(); };
+    const row = (key, label) => {
+      const id = p.photos[key], th = h('div', { class: 'pth' }, id ? h('img', { alt: '' }) : h('span', null, '📷'));
+      if (id) mediaURL(id).then(u => { const im = th.querySelector('img'); if (u && im) im.src = u; });
+      const set = async cap => { const fs = await pickFile('image/*', cap); if (!fs) return; p.photos[key] = await savePhoto(fs[0], 1000); persist(); photoEditor(kind, k); };
+      return h('div', { class: 'prow2' }, th, h('div', { class: 'pl' }, label),
+        h('button', { type: 'button', class: 'btn', onclick: () => set('environment') }, '📷 とる'),
+        h('button', { type: 'button', class: 'btn', onclick: () => set() }, '🖼️ えらぶ'),
+        id ? h('button', { type: 'button', class: 'btn', onclick: () => { delete p.photos[key]; persist(); cleanMedia(); photoEditor(kind, k); } }, '🗑') : null);
+    };
+    PN.append(h('div', { class: 'panel-head' }, h('h2', null, ITEMS[k].e + ' ' + ITEMS[k].n + ' の しゃしん'), h('button', { type: 'button', class: 'btn ok', onclick: close }, '✓ とじる')),
+      h('p', { class: 'note' }, 'セリフごとに しゃしんを つけると、その セリフが ひかって いる ときに おおきく でます（れい：「これから あさの かいを はじめます」に にっちょくが まえに たつ しゃしん）。セリフに しゃしんが ない ときは「こうもく ぜんたい」の しゃしんが でます。しゃしんは この たんまつの なかだけに ほぞん します。'),
+      row(kind + ':' + k, '🖼️ こうもく ぜんたい'),
+      ...lines.map((l, i) => row(kind + ':' + k + ':' + i, '【' + l[0] + '】 ' + l[1])));
+    m.classList.add('open'); m.scrollTop = 0;
+  }
   function renderSetup() {
     screen = 'setup';
     const p = cur(), re = () => { persist(); renderSetup(); };
@@ -289,7 +318,8 @@
       h('div', { class: 'prog' }, p[kind].map((x, i) => h('div', { class: 'it' + (x.on ? '' : ' off') }, E(ITEMS[x.k].e), h('b', null, ITEMS[x.k].n),
         h('button', { type: 'button', class: 'ibtn' + (x.on ? ' on' : ''), onclick: () => { x.on = !x.on; re(); } }, x.on ? '✓' : '－'),
         h('button', { type: 'button', class: 'ibtn', onclick: () => { if (i > 0) { p[kind].splice(i - 1, 0, p[kind].splice(i, 1)[0]); re(); } } }, '▲'),
-        h('button', { type: 'button', class: 'ibtn', onclick: () => { if (i < p[kind].length - 1) { p[kind].splice(i + 1, 0, p[kind].splice(i, 1)[0]); re(); } } }, '▼')))));
+        h('button', { type: 'button', class: 'ibtn', onclick: () => { if (i < p[kind].length - 1) { p[kind].splice(i + 1, 0, p[kind].splice(i, 1)[0]); re(); } } }, '▼'),
+        h('button', { type: 'button', class: 'ibtn ph' + (Object.keys(p.photos).some(q => q.indexOf(kind + ':' + x.k) === 0) ? ' on' : ''), title: 'しゃしん', onclick: () => photoEditor(kind, x.k) }, '📷')))));
     const kak = h('div', { class: 'sbox' }, h('h3', null, '🧹 かかり（なまえを タッチして きめる）'),
       p.kakari.map((x, i) => h('div', { class: 'srowx' }, E(x.e), h('input', { type: 'text', value: x.n, style: 'flex:0 1 160px', oninput: e => { x.n = e.target.value; persistSoon(); } }),
         h('div', { class: 'chipl', style: 'flex:1' }, p.roster.map(m => h('button', { type: 'button', class: 'mini-btn' + (x.who.indexOf(m.id) >= 0 ? ' on' : ''), style: x.who.indexOf(m.id) >= 0 ? 'background:var(--accent);color:#fff;border-color:var(--accent)' : '', onclick: () => { const j = x.who.indexOf(m.id); if (j >= 0) x.who.splice(j, 1); else x.who.push(m.id); re(); } }, m.name))),
